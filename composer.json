@@ -1,0 +1,23 @@
+{
+    "name": "laravelarab/tarjama",
+    "description": "It's a laravel model columns translation manager",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Abdellah Chadidi",
+            "email": "chadidi97@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Barryvdh\\Debugbar\\ServiceProvider"
+            ],
+            "aliases": {
+                "Debugbar": "Barryvdh\\Debugbar\\Facade"
+            }
+        }
+    },
+}
