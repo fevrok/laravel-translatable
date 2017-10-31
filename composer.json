@@ -2,6 +2,18 @@
     "name": "laravelarab/tarjama",
     "description": "It's a laravel model columns translation manager",
     "license": "MIT",
+    "keywords": [
+        "laravel",
+        "laravel-package",
+        "translate",
+        "eloquent",
+        "model",
+        "i8n",
+        "translation",
+        "tarjama",
+        "multilingual"
+    ],
+    "homepage": "https://github.com/LaravelArab/tarjama",
     "authors": [
         {
             "name": "Abdellah Chadidi",
@@ -10,14 +22,16 @@
     ],
     "minimum-stability": "dev",
     "require": {},
+    "autoload": {
+        "psr-4": {
+            "LaravelArab\\Tarjama\\": "src"
+        }
+    },
     "extra": {
         "laravel": {
             "providers": [
-                "Barryvdh\\Debugbar\\ServiceProvider"
-            ],
-            "aliases": {
-                "Debugbar": "Barryvdh\\Debugbar\\Facade"
-            }
+                "LaravelArab\\Tarjama\\TarjamaServiceProvider"
+            ]
         }
     }
 }
