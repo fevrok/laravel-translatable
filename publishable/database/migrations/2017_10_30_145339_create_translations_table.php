@@ -1,10 +1,10 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-class CreateTarjamaTable extends Migration
+class CreateTranslationsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,16 @@ class CreateTarjamaTable extends Migration
      */
     public function up()
     {
-        Schema::create('tarjama', function (Blueprint $table) {
+        Schema::create('translations', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('transable_type');
-            $table->integer('transable_id')->unsigned();
+            $table->string('table_name');
             $table->string('column_name');
+            $table->integer('foreign_key')->unsigned();
             $table->string('locale');
             $table->text('value');
+
+            $table->unique(['table_name', 'column_name', 'foreign_key', 'locale']);
+
             $table->timestamps();
         });
     }
@@ -31,6 +34,6 @@ class CreateTarjamaTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tarjama');
+        Schema::dropIfExists('translations');
     }
 }
