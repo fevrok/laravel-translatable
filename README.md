@@ -7,7 +7,7 @@ It's a Laravel model columns translation manager
 You can install the package via composer:
 
 ```bash
-composer require spatie/laravel-translatable
+composer require laravelarab/tarjama
 ```
 
 If you have Laravel 5.5 and up The package will automatically register itself.
@@ -56,9 +56,9 @@ next migrate translations table
 php artisan migrate
 ```
 
-## Making a model translatable
+## Making a model transable
 
-The required steps to make a model translatable are:
+The required steps to make a model transable are:
 
 - Just add the `LaravelArab\Tarjama\Transable`-trait.
 
