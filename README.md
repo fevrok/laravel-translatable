@@ -71,6 +71,15 @@ use LaravelArab\Tarjama\Transable;
 class Item extends Model
 {
     use Transable;
+    
+    /**
+      * The attributes that are Transable.
+      *
+      * @var array
+      */
+    protected $transable = [
+        'name', 'color'
+    ];
 }
 ```
 
