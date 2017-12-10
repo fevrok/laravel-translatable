@@ -21,7 +21,15 @@
         }
     ],
     "minimum-stability": "dev",
-    "require": {},
+    "prefer-stable": true,
+    "require": {
+        "php": ">=5.4.0",
+        "illuminate/support": "5.5.*"
+    },
+    "require-dev": {
+        "orchestra/testbench": "3.5.*",
+        "phpunit/phpunit": "~6.0"
+    },
     "autoload": {
         "psr-4": {
             "LaravelArab\\Tarjama\\": "src"
