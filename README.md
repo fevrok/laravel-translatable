@@ -26,19 +26,11 @@ php artisan vendor:publish --provider="LaravelArab\Tarjama\TarjamaServiceProvide
 This is the contents of the published file:
 ```php
 return [
-    /*
-    |--------------------------------------------------------------------------
-    | Tarjama config
-    |--------------------------------------------------------------------------
-    |
-    | Here you can specify Tarjama configs
-    |
-    */
    
    /**
     * Default language
     */
-   'default' => 'en',
+   'locale' => 'en',
 
    /**
     * Supported Locales e.g: ['en', 'fr', 'ar']
@@ -56,28 +48,28 @@ next migrate translations table
 php artisan migrate
 ```
 
-## Making a model transable
+## Making a model translatable
 
-The required steps to make a model transable are:
+The required steps to make a model translatable are:
 
-- Just add the `LaravelArab\Tarjama\Transable`-trait.
+- Just add the `LaravelArab\Tarjama\Translatable`-trait.
 
 Here's an example of a prepared model:
 
 ``` php
 use Illuminate\Database\Eloquent\Model;
-use LaravelArab\Tarjama\Transable;
+use LaravelArab\Tarjama\Translatable;
 
 class Item extends Model
 {
-    use Transable;
+    use Translatable;
     
     /**
-      * The attributes that are Transable.
+      * The attributes that are Translatable.
       *
       * @var array
       */
-    protected $transable = [
+    protected $translatable = [
         'name', 'color'
     ];
 }
@@ -85,31 +77,31 @@ class Item extends Model
 
 ### Available methods
 
-saving translations
+Saving translations
 
 ``` php
 $item = new Item;
 $data = array('en' => 'car', 'ar' => 'سيارة');
 // column name instead of 'name' and translations array instead of $data
-// if 3 parameter is true it will save automatically
+// if 3 parameter is true it will save to translations table automatically
 $item->setTranslations('name', $data, true);
 // 3 parameter by default is false so you have to save manually
 $item->setTranslations('name', $data); // setTranslations($attribute, array $translations, $save = false)
 $item->save();
 ```
 
-getting translations
+Get translations
 
 ``` php
 $item = new Item::first();
-$item->getTrans('city', 'ar'); // getTrans($attribute, $language = null, $fallback = true)
+$item->getTranslation('city');  // get current locale translation
+$item->getTranslation('city', 'ar'); // getTranslation($attribute, $language = null, $fallback = true)
 $item->getTranslationsOf('name', ['ar', 'en']); // getTranslationsOf($attribute, array $languages = null, $fallback = true)
 ```
 
-delete translations
+Delete translations
 
 ``` php
 $item = new Item::first();
 $item->deleteTranslations(['name', 'color'], 'ar'); // you can also pass array of locales e.g: ['ar', 'en']
-$item->deleteTrans('name', 'en'); // you can also pass array of locales e.g: ['ar', 'en']
 ```
