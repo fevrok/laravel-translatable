@@ -204,6 +204,23 @@ trait Translatable
         return property_exists($this, 'translatable') ? $this->translatable : [];
     }
 
+    public function setTranslation($attribute, $lang, $value, $save = false)
+    {
+
+        if (!$this->relationLoaded('translations')) $this->load('translations');
+
+        $default = config('app.locale', 'en');
+
+        if ($lang != $default) {
+            $tranlator = $this->translate($lang, false);
+            $tranlator->$attribute = $value;
+            if ($save) $tranlator->save();
+            return $tranlator;
+        }   
+
+        $this->$attribute = $value;
+    }
+
     public function setTranslations($attribute, array $translations, $save = false)
     {
         $response = [];
