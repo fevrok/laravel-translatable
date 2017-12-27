@@ -23,6 +23,19 @@ trait Translatable
     }
 
     /**
+     * @param string $key
+     *
+     * @return mixed
+     */
+    public function getAttributeValue($key)
+    {
+        if (!in_array($key, $this->getTranslatableAttributes())) {
+            return $this->getAttributes()[$key];
+        }
+        return $this->getTranslation($key, config('app.locale'));
+    }
+
+    /**
      * Load translations relation.
      *
      * @return mixed
@@ -31,7 +44,7 @@ trait Translatable
     {
         return $this->hasMany(Translation::class, 'foreign_key', $this->getKeyName())
             ->where('table_name', $this->getTable())
-            ->whereIn('locale', config('tarjama.locales', []));
+            ->whereIn('locale', config('tarjama.locales', [config('tarjama.locale')]));
     }
 
     /**
@@ -45,7 +58,7 @@ trait Translatable
     public function scopeWithTranslation(Builder $query, $locale = null, $fallback = true)
     {
         if (is_null($locale)) {
-            $locale = app()->getLocale();
+            $locale = config('app.locale');
         }
 
         if ($fallback === true) {
@@ -72,7 +85,7 @@ trait Translatable
     public function scopeWithTranslations(Builder $query, $locales = null, $fallback = true)
     {
         if (is_null($locales)) {
-            $locales = app()->getLocale();
+            $locales = config('tarjama.locales');
         }
 
         if ($fallback === true) {
@@ -145,9 +158,10 @@ trait Translatable
 
     public function getTranslatedAttributeMeta($attribute, $locale = null, $fallback = true)
     {
+        $default = config('tarjama.locale');
         // Attribute is translatable
         if (!in_array($attribute, $this->getTranslatableAttributes())) {
-            return [$this->getAttribute($attribute), config('app.locale'), false];
+            return [$this->getAttributes()[$attribute], $default, false];
         }
 
         if (!$this->relationLoaded('translations')) {
@@ -155,14 +169,12 @@ trait Translatable
         }
 
         if (is_null($locale)) {
-            $locale = app()->getLocale();
+            $locale = config('app.locale');
         }
 
         if ($fallback === true) {
             $fallback = config('app.fallback_locale', 'en');
         }
-
-        $default = config('tarjama.locale');
 
         if ($default == $locale) {
             return [$this->getAttribute($attribute), $default, true];
@@ -178,11 +190,11 @@ trait Translatable
         }
 
         if ($fallback == $locale) {
-            return [$this->getAttribute($attribute), $locale, false];
+            return [$this->getAttributes()[$attribute], $locale, false];
         }
 
         if ($fallback == $default) {
-            return [$this->getAttribute($attribute), $locale, false];
+            return [$this->getAttributes()[$attribute], $locale, false];
         }
 
         $fallbackTranslation = $translations->where('locale', $fallback)->first();
@@ -209,7 +221,7 @@ trait Translatable
 
         if (!$this->relationLoaded('translations')) $this->load('translations');
 
-        $default = config('app.locale', 'en');
+        $default = config('tarjama.locale', 'en');
 
         if ($lang != $default) {
             $tranlator = $this->translate($lang, false);
@@ -229,7 +241,7 @@ trait Translatable
             $this->load('translations');
         }
 
-        $default = config('app.locale', 'en');
+        $default = config('tarjama.locale', 'en');
         $locales = config('tarjama.locales', [$default]);
 
         foreach ($locales as $locale) {
