@@ -36,6 +36,24 @@ trait Translatable
     }
 
     /**
+     * Set a given attribute on the model.
+     *
+     * @param string $key
+     * @param mixed  $value
+     *
+     * @return $this
+     */
+    public function setAttribute($key, $value)
+    {
+        // pass arrays and untranslatable attributes to the parent method
+        if (!in_array($key, $this->getTranslatableAttributes())) {
+            return parent::setAttribute($key, $value);
+        }
+        // set a translation for the current app locale
+        return $this->setTranslation($key, config('app.locale', config('tarjama.locale')), $value, true);
+    }
+
+    /**
      * Load translations relation.
      *
      * @return mixed
@@ -216,21 +234,21 @@ trait Translatable
         return property_exists($this, 'translatable') ? $this->translatable : [];
     }
 
-    public function setTranslation($attribute, $lang, $value, $save = false)
+    public function setTranslation($attribute, $locale, $value, $save = false)
     {
 
         if (!$this->relationLoaded('translations')) $this->load('translations');
 
         $default = config('tarjama.locale', 'en');
 
-        if ($lang != $default) {
-            $tranlator = $this->translate($lang, false);
+        if ($locale != $default) {
+            $tranlator = $this->translate($locale, false);
             $tranlator->$attribute = $value;
             if ($save) $tranlator->save();
             return $tranlator;
         }   
 
-        $this->$attribute = $value;
+        $this->attributes[$attribute] = $value;
     }
 
     public function setTranslations($attribute, array $translations, $save = false)
