@@ -28,18 +28,15 @@ This is the contents of the published file:
 return [
    
    /**
-    * Default language
+    * Default Locale || Root columns locale
+    * We will use this locale if config('app.locale') translation not exist
     */
    'locale' => 'en',
 
    /**
     * Supported Locales e.g: ['en', 'fr', 'ar']
     */
-   'locales' => [
-   		'ar',
-   		'en',
-   		'fr'
-   	]
+   'locales' => ['ar', 'en', 'fr']
 
 ];
 ```
@@ -52,7 +49,7 @@ php artisan migrate
 
 The required steps to make a model translatable are:
 
-- Just add the `LaravelArab\Tarjama\Translatable`-trait.
+- Just use the `LaravelArab\Tarjama\Translatable` trait.
 
 Here's an example of a prepared model:
 
@@ -82,11 +79,16 @@ Saving translations
 ``` php
 $item = new Item;
 $data = array('en' => 'car', 'ar' => 'سيارة');
-// column name instead of 'name' and translations array instead of $data
-// if 3 parameter is true it will save to translations table automatically
-$item->setTranslations('name', $data, true);
-// 3 parameter by default is false so you have to save manually
+
 $item->setTranslations('name', $data); // setTranslations($attribute, array $translations, $save = false)
+
+// or save one translation
+$item->setTranslation('name', 'en', 'car', true); // setTranslation($attribute, $locale, $value, $save = false)
+
+// or just do
+$item->name = 'car'; // note: this will save automaticaly unless it's the default locale
+
+// save if current locale == default locale OR $save = false
 $item->save();
 ```
 
@@ -94,7 +96,12 @@ Get translations
 
 ``` php
 $item = new Item::first();
-$item->getTranslation('city');  // get current locale translation
+// get current locale translation
+$item->city
+OR
+$item->getTranslation('city');
+
+// pass translation locales
 $item->getTranslation('city', 'ar'); // getTranslation($attribute, $language = null, $fallback = true)
 $item->getTranslationsOf('name', ['ar', 'en']); // getTranslationsOf($attribute, array $languages = null, $fallback = true)
 ```
@@ -103,5 +110,5 @@ Delete translations
 
 ``` php
 $item = new Item::first();
-$item->deleteTranslations(['name', 'color'], 'ar'); // you can also pass array of locales e.g: ['ar', 'en']
+$item->deleteTranslations(['name', 'color'], ['ar', 'en']); // deleteTranslations(array $attributes, $locales = null)
 ```
