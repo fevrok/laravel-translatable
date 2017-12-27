@@ -234,15 +234,15 @@ trait Translatable
         return property_exists($this, 'translatable') ? $this->translatable : [];
     }
 
-    public function setTranslation($attribute, $lang, $value, $save = false)
+    public function setTranslation($attribute, $locale, $value, $save = false)
     {
 
         if (!$this->relationLoaded('translations')) $this->load('translations');
 
         $default = config('tarjama.locale', 'en');
 
-        if ($lang != $default) {
-            $tranlator = $this->translate($lang, false);
+        if ($locale != $default) {
+            $tranlator = $this->translate($locale, false);
             $tranlator->$attribute = $value;
             if ($save) $tranlator->save();
             return $tranlator;
