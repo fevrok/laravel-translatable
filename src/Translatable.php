@@ -30,7 +30,7 @@ trait Translatable
     public function getAttributeValue($key)
     {
         if (!in_array($key, $this->getTranslatableAttributes())) {
-            return $this->getAttributes()[$key];
+            return parent::getAttributeValue($key);
         }
         return $this->getTranslation($key, config('app.locale'));
     }
@@ -161,7 +161,7 @@ trait Translatable
         $default = config('tarjama.locale');
         // Attribute is translatable
         if (!in_array($attribute, $this->getTranslatableAttributes())) {
-            return [$this->getAttributes()[$attribute], $default, false];
+            return [parent::getAttributeValue($attribute), $default, false];
         }
 
         if (!$this->relationLoaded('translations')) {
@@ -177,7 +177,7 @@ trait Translatable
         }
 
         if ($default == $locale) {
-            return [$this->getAttribute($attribute), $default, true];
+            return [parent::getAttributeValue($attribute), $default, true];
         }
 
         $translations = $this->getRelation('translations')
@@ -190,11 +190,11 @@ trait Translatable
         }
 
         if ($fallback == $locale) {
-            return [$this->getAttributes()[$attribute], $locale, false];
+            return [parent::getAttributeValue($attribute), $locale, false];
         }
 
         if ($fallback == $default) {
-            return [$this->getAttributes()[$attribute], $locale, false];
+            return [parent::getAttributeValue($attribute), $locale, false];
         }
 
         $fallbackTranslation = $translations->where('locale', $fallback)->first();
