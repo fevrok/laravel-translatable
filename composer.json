@@ -23,12 +23,12 @@
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
-        "php": ">=5.4.0",
-        "illuminate/support": "5.5.*"
+        "php": ">=5.6.4",
+        "illuminate/support": "~5.4.0|~5.5.0|~5.6.0"
     },
     "require-dev": {
-        "orchestra/testbench": "3.5.*",
-        "phpunit/phpunit": "~6.0"
+        "orchestra/testbench": "~3.4.0|~3.5.0|~3.6.0",
+        "phpunit/phpunit": "~5.7.14|~6.1|~7.0"
     },
     "autoload": {
         "psr-4": {
