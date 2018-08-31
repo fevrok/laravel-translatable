@@ -1,6 +1,9 @@
 <?php
+
 namespace LaravelArab\Tarjama\Tests;
+
 use Illuminate\Contracts\Console\Kernel;
+
 trait CreatesApplication
 {
     /**
