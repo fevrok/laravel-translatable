@@ -27,7 +27,8 @@ class TarjamaServiceProvider extends ServiceProvider
     public function register()
     {
         $this->mergeConfigFrom(
-            __DIR__.'/../publishable/config/tarjama.php', 'tarjama'
+            __DIR__.'/../publishable/config/tarjama.php',
+            'tarjama'
         );
     }
 }
