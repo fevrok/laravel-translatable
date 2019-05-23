@@ -112,3 +112,19 @@ Delete translations
 $item = new Item::first();
 $item->deleteTranslations(['name', 'color'], ['ar', 'en']); // deleteTranslations(array $attributes, $locales = null)
 ```
+
+## Maintainers
+
+<table>
+  <tbody>
+    <tr>
+      <td align="center">
+        <a href="https://github.com/chadidi">
+          <img width="150" height="150" src="https://github.com/chadidi.png?v=3&s=150">
+          </br>
+          Abdellah Chadidi
+        </a>
+      </td>
+    </tr>
+  <tbody>
+</table>
