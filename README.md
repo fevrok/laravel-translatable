@@ -1,7 +1,11 @@
 # tarjama
+
 It's a Laravel model columns translation manager
+
 ## Current working model
+
 ![Laravel Tarjama current working model](/images/current_working_model.png)
+
 ## Installation
 
 You can install the package via composer:
@@ -19,14 +23,16 @@ LaravelArab\Tarjama\TarjamaServiceProvider::class,
 ```
 
 If you want to change the default locale, you must publish the config file:
+
 ```bash
 php artisan vendor:publish --provider="LaravelArab\Tarjama\TarjamaServiceProvider"
 ```
 
 This is the contents of the published file:
+
 ```php
 return [
-   
+
    /**
     * Default Locale || Root columns locale
     * We will use this locale if config('app.locale') translation not exist
@@ -40,7 +46,9 @@ return [
 
 ];
 ```
+
 next migrate translations table
+
 ```bash
 php artisan migrate
 ```
@@ -53,14 +61,14 @@ The required steps to make a model translatable are:
 
 Here's an example of a prepared model:
 
-``` php
+```php
 use Illuminate\Database\Eloquent\Model;
 use LaravelArab\Tarjama\Translatable;
 
 class Item extends Model
 {
     use Translatable;
-    
+
     /**
       * The attributes that are Translatable.
       *
@@ -76,7 +84,7 @@ class Item extends Model
 
 Saving translations
 
-``` php
+```php
 $item = new Item;
 $data = array('en' => 'car', 'ar' => 'سيارة');
 
@@ -94,7 +102,7 @@ $item->save();
 
 Get translations
 
-``` php
+```php
 $item = new Item::first();
 // get current locale translation
 $item->city
@@ -108,7 +116,7 @@ $item->getTranslationsOf('name', ['ar', 'en']); // getTranslationsOf($attribute,
 
 Delete translations
 
-``` php
+```php
 $item = new Item::first();
 $item->deleteTranslations(['name', 'color'], ['ar', 'en']); // deleteTranslations(array $attributes, $locales = null)
 ```

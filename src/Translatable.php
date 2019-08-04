@@ -2,10 +2,10 @@
 
 namespace LaravelArab\Tarjama;
 
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use LaravelArab\Tarjama\Models\Translation;
 use LaravelArab\Tarjama\Translator;
+use Illuminate\Database\Eloquent\Builder;
+use LaravelArab\Tarjama\Models\Translation;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 trait Translatable
 {
@@ -237,16 +237,20 @@ trait Translatable
     public function setTranslation($attribute, $locale, $value, $save = false)
     {
 
-        if (!$this->relationLoaded('translations')) $this->load('translations');
+        if (!$this->relationLoaded('translations')) {
+            $this->load('translations');
+        }
 
         $default = config('tarjama.locale', 'en');
 
         if ($locale != $default) {
             $tranlator = $this->translate($locale, false);
             $tranlator->$attribute = $value;
-            if ($save) $tranlator->save();
+            if ($save) {
+                $tranlator->save();
+            }
             return $tranlator;
-        }   
+        }
 
         $this->attributes[$attribute] = $value;
     }

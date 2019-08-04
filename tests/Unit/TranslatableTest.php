@@ -2,8 +2,8 @@
 
 namespace LaravelArab\Tarjama\Tests\Unit;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use LaravelArab\Tarjama\Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class TranslatableTest extends TestCase
 {
