@@ -96,7 +96,7 @@ $item->setTranslation('name', 'en', 'car', true); // setTranslation($attribute, 
 // or just do
 $item->name = 'car'; // note: this will save automaticaly unless it's the default locale
 
-// save if current locale == default locale OR $save = false
+// This will save if (current locale == default locale OR $save = false)
 $item->save();
 ```
 

@@ -13,9 +13,9 @@ class TarjamaServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->loadMigrationsFrom(__DIR__.'/../publishable/database/migrations');
+        $this->loadMigrationsFrom(__DIR__ . '/../publishable/database/migrations');
         $this->publishes([
-            __DIR__.'/../publishable/config/tarjama.php' => config_path('tarjama.php'),
+            __DIR__ . '/../publishable/config/tarjama.php' => config_path('tarjama.php'),
         ]);
     }
 
@@ -27,7 +27,7 @@ class TarjamaServiceProvider extends ServiceProvider
     public function register()
     {
         $this->mergeConfigFrom(
-            __DIR__.'/../publishable/config/tarjama.php',
+            __DIR__ . '/../publishable/config/tarjama.php',
             'tarjama'
         );
     }
