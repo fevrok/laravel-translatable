@@ -1,7 +1,7 @@
 <?php
 
 return [
-   
+
    /**
     * Default Locale || Root columns locale
     * We will use this locale if config('app.locale') translation not exist

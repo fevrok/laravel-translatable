@@ -175,12 +175,12 @@ class Translator implements ArrayAccess
         $this->attributes[$name]['modified'] = true;
     }
 
-    public function offsetGet($offset)
+    public function getOffset($offset)
     {
         return $this->attributes[$offset]['value'];
     }
 
-    public function offsetSet($offset, $value)
+    public function setOffset($offset, $value)
     {
         $this->attributes[$offset]['value'] = $value;
 
@@ -196,7 +196,7 @@ class Translator implements ArrayAccess
         return isset($this->attributes[$offset]);
     }
 
-    public function offsetUnset($offset)
+    public function unsetOffset($offset)
     {
         unset($this->attributes[$offset]);
     }
@@ -302,7 +302,7 @@ class Translator implements ArrayAccess
     public function __call($method, array $arguments)
     {
         if (!$this->model->hasTranslatorMethod($method)) {
-            throw new \Exception('Call to undefined method LaravelArab\Tarjama\Translator::'.$method.'()');
+            throw new \Exception('Call to undefined method LaravelArab\Tarjama\Translator::' . $method . '()');
         }
 
         return call_user_func_array([$this, 'runTranslatorMethod'], [$method, $arguments]);
