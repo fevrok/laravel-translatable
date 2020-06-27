@@ -17,7 +17,9 @@
   "authors": [
     {
       "name": "Abdellah Chadidi",
-      "email": "chadidi97@gmail.com"
+      "email": "chadidi97@gmail.com",
+      "homepage": "https://chadidi.dev",
+      "role": "Developer"
     }
   ],
   "minimum-stability": "stable",
