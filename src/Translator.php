@@ -175,12 +175,12 @@ class Translator implements ArrayAccess
         $this->attributes[$name]['modified'] = true;
     }
 
-    public function getOffset($offset)
+    public function offsetGet($offset)
     {
         return $this->attributes[$offset]['value'];
     }
 
-    public function setOffset($offset, $value)
+    public function offsetSet($offset, $value)
     {
         $this->attributes[$offset]['value'] = $value;
 
@@ -196,7 +196,7 @@ class Translator implements ArrayAccess
         return isset($this->attributes[$offset]);
     }
 
-    public function unsetOffset($offset)
+    public function offsetUnset($offset)
     {
         unset($this->attributes[$offset]);
     }
