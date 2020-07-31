@@ -215,6 +215,8 @@ trait Translatable
      */
     public function getTranslatedAttributeMeta($attribute, $locale = null, $fallback = true)
     {
+        $defaultReturnValue = [parent::getAttributeValue($attribute), $locale, false];
+
         // Attribute is translatable
         //
         if (!in_array($attribute, $this->getTranslatableAttributes())) {
@@ -226,7 +228,7 @@ trait Translatable
         }
 
         if ($fallback === true) {
-            $fallback = config('app.fallback_locale', 'en');
+            $fallback = config('app.fallback_locale');
         }
 
         $default = config('tarjama.locale');
@@ -249,11 +251,11 @@ trait Translatable
         }
 
         if ($fallback == $locale) {
-            return [$this->getAttribute($attribute), $locale, false];
+            return $defaultReturnValue;
         }
 
         if ($fallback == $default) {
-            return [$this->getAttribute($attribute), $locale, false];
+            return $defaultReturnValue;
         }
 
         $fallbackTranslation = $translations->where('locale', $fallback)->first();
@@ -262,7 +264,7 @@ trait Translatable
             return [$fallbackTranslation->value, $locale, true];
         }
 
-        return [null, $locale, false];
+        return $defaultReturnValue;
     }
 
     /**
