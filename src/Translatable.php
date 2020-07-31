@@ -93,12 +93,8 @@ trait Translatable
      */
     public function scopeWithTranslations(Builder $query, $locales = null, $fallback = true)
     {
-        if (is_null($locales)) {
-            $locales = app()->getLocale();
-        }
-
         if ($fallback === true) {
-            $fallback = config('app.fallback_locale', 'en');
+            $fallback = config('app.fallback_locale');
         }
 
         $query->with(['translations' => function (Relation $query) use ($locales, $fallback) {
