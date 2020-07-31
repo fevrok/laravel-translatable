@@ -68,7 +68,7 @@ trait Translatable
         }
 
         if ($fallback === true) {
-            $fallback = config('app.fallback_locale', 'en');
+            $fallback = config('app.fallback_locale');
         }
 
         $query->with(['translations' => function (Relation $query) use ($locale, $fallback) {
