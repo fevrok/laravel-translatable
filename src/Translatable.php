@@ -254,10 +254,6 @@ trait Translatable
             return $defaultReturnValue;
         }
 
-        if ($fallback == $default) {
-            return $defaultReturnValue;
-        }
-
         $fallbackTranslation = $translations->where('locale', $fallback)->first();
 
         if ($fallbackTranslation && $fallback !== false) {
