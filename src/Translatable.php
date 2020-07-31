@@ -174,21 +174,19 @@ trait Translatable
     {
         $response = [];
 
-        if (empty($languages)) {
-            if (!$this->relationLoaded('translations')) {
-                $this->load('translations');
-            }
-    
-            $translations = $this->getRelation('translations')
-                ->where('column_name', $attribute);
+        if (!$this->relationLoaded('translations')) {
+            $this->load('translations');
+        }
 
-            foreach ($translations as $translation) {
-                $response[$translation->locale] = $translation->value;
-            }
-        } else {
-            foreach ($languages as $language) {
-                $response[$language] = $this->getTranslation($attribute, $language, $fallback);
-            }
+        $translations = $this->getRelation('translations')
+            ->where('column_name', $attribute);
+
+        if (!empty($languages)) {
+            $translations = $translations->whereIn('locale', $languages);
+        }
+
+        foreach ($translations as $translation) {
+            $response[$translation->locale] = $translation->value;
         }
 
         return $response;
