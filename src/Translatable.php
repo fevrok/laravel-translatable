@@ -172,13 +172,23 @@ trait Translatable
      */
     public function getTranslationsOf($attribute, array $languages = null, $fallback = true)
     {
-        if (is_null($languages)) {
-            $languages = config('tarjama.locales', [config('app.locale')]);
-        }
-
         $response = [];
-        foreach ($languages as $language) {
-            $response[$language] = $this->getTranslatedAttribute($attribute, $language, $fallback);
+
+        if (empty($languages)) {
+            if (!$this->relationLoaded('translations')) {
+                $this->load('translations');
+            }
+    
+            $translations = $this->getRelation('translations')
+                ->where('column_name', $attribute);
+
+            foreach ($translations as $translation) {
+                $response[$translation->locale] = $translation->value;
+            }
+        } else {
+            foreach ($languages as $language) {
+                $response[$language] = $this->getTranslation($attribute, $language, $fallback);
+            }
         }
 
         return $response;
