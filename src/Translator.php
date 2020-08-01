@@ -207,7 +207,7 @@ class Translator implements ArrayAccess, JsonSerializable
     {
         $this->attributes[$attribute] = [
             'value'    => $this->model->attributes[$attribute],
-            'locale'   => config('tarjama.default', 'en'),
+            'locale'   => null,
             'exists'   => true,
             'modified' => false,
         ];
