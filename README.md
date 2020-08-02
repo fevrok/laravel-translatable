@@ -22,31 +22,6 @@ else you have to add the service provider to app/config/app.php
 LaravelArab\Tarjama\TarjamaServiceProvider::class,
 ```
 
-If you want to change the default locale, you must publish the config file:
-
-```bash
-php artisan vendor:publish --provider="LaravelArab\Tarjama\TarjamaServiceProvider"
-```
-
-This is the contents of the published file:
-
-```php
-return [
-
-   /**
-    * Default Locale || Root columns locale
-    * We will use this locale if config('app.locale') translation not exist
-    */
-   'locale' => 'en',
-
-   /**
-    * Supported Locales e.g: ['en', 'fr', 'ar']
-    */
-   'locales' => ['ar', 'en', 'fr']
-
-];
-```
-
 next migrate translations table
 
 ```bash
@@ -77,6 +52,90 @@ class Item extends Model
     protected $translatable = [
         'name', 'color'
     ];
+}
+```
+
+### Setting custom translation model
+
+If you want to choose another translation model, you will need to:
+
+- If the custom table is not created, you will need to create it. Like that migration suggests:
+
+```php
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+class CreateItemsTranslationsTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('items_translations', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('table_name');
+            $table->string('column_name');
+            $table->integer('foreign_key')->unsigned();
+            $table->string('locale');
+            $table->text('value');
+
+            $table->unique(['table_name', 'column_name', 'foreign_key', 'locale']);
+
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('items_translations');
+    }
+}
+```
+
+- Create the model that will get translations.
+
+ItemsTranslation.php
+```php
+class ItemsTranslation extends \LaravelArab\Tarjama\Models\Translation
+{
+    protected $table = 'items_translations';
+}
+```
+
+- Inform the model class to `$translations_model` property.
+
+```php
+use Illuminate\Database\Eloquent\Model;
+use LaravelArab\Tarjama\Translatable;
+
+class Item extends Model
+{
+    use Translatable;
+
+    /**
+      * The attributes that are Translatable.
+      *
+      * @var array
+      */
+    protected $translatable = [
+        'name', 'color'
+    ];
+	
+    /**
+      * The model used to get translatios.
+      *
+      * @var string
+      */
+    protected $translations_model = ItemsTranslation::class;
 }
 ```
 

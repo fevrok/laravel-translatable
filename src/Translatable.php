@@ -278,7 +278,17 @@ trait Translatable
     }
 
     /**
-     * Set translations attributes.
+     * Get translations model.
+     *
+     * @return array
+     */
+    public function getTranslationsModel()
+    {
+        return property_exists($this, 'translations_model') ? $this->translations_model : Translation::class;
+    }
+
+    /**
+     * Set translation.
      * 
      * @param string $attribute 
      * @param array $translations 
