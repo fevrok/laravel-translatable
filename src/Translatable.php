@@ -40,37 +40,39 @@ trait Translatable
 
     /**
      * Check if this model can translate.
-     *
-     * @return bool
+     * 
+     * @return bool 
      */
-    public function translatable()
+    public function translatable(): bool
     {
         if (isset($this->translatable) && $this->translatable == false) {
             return false;
         }
+
         return !empty($this->getTranslatableAttributes());
     }
 
     /**
-     * @param string $key
-     *
-     * @return mixed
+     * Get attribute value.
+     * 
+     * @param string $key 
+     * @return mixed 
      */
     public function getAttributeValue($key)
     {
         if (!in_array($key, $this->getTranslatableAttributes())) {
             return parent::getAttributeValue($key);
         }
+
         return $this->getTranslation($key, config('app.locale'));
     }
 
     /**
      * Set a given attribute on the model.
-     *
-     * @param string $key
-     * @param mixed  $value
-     *
-     * @return $this
+     * 
+     * @param string $key 
+     * @param mixed $value 
+     * @return $this 
      */
     public function setAttribute($key, $value)
     {
@@ -85,10 +87,11 @@ trait Translatable
     /**
      * This scope eager loads the translations for the default and the fallback locale only.
      * We can use this as a shortcut to improve performance in our application.
-     *
-     * @param Builder     $query
-     * @param string|null $locale
-     * @param string|bool $fallback
+     * 
+     * @param Builder $query 
+     * @param string|null $locale 
+     * @param string|bool $fallback 
+     * @return void 
      */
     public function scopeWithTranslation(Builder $query, $locale = null, $fallback = true)
     {
@@ -112,10 +115,11 @@ trait Translatable
     /**
      * This scope eager loads the translations for the default and the fallback locale only.
      * We can use this as a shortcut to improve performance in our application.
-     *
-     * @param Builder           $query
-     * @param string|null|array $locales
-     * @param string|bool       $fallback
+     * 
+     * @param Builder $query 
+     * @param string|null|array $locales 
+     * @param string|bool $fallback 
+     * @return void 
      */
     public function scopeWithTranslations(Builder $query, $locales = null, $fallback = true)
     {
@@ -160,13 +164,12 @@ trait Translatable
     }
 
     /**
-     * Get a single translated attribute.
-     *
-     * @param $attribute
-     * @param null $language
-     * @param bool $fallback
-     *
-     * @return null
+     * Get attribute translations of many launguages.
+     * 
+     * @param mixed $attribute 
+     * @param array|null $languages 
+     * @param bool $fallback 
+     * @return array 
      */
     public function getTranslationsOf($attribute, array $languages = null, $fallback = true)
     {
@@ -182,6 +185,14 @@ trait Translatable
         return $response;
     }
 
+    /**
+     * Get translated attribute meta.
+     * 
+     * @param mixed $attribute 
+     * @param mixed|null $locale 
+     * @param bool $fallback 
+     * @return array 
+     */
     public function getTranslatedAttributeMeta($attribute, $locale = null, $fallback = true)
     {
         $default = config('tarjama.locale');
@@ -234,7 +245,7 @@ trait Translatable
 
     /**
      * Get attributes that can be translated.
-     *
+     * 
      * @return array
      */
     public function getTranslatableAttributes()
@@ -242,6 +253,15 @@ trait Translatable
         return property_exists($this, 'translatable') ? $this->translatable : [];
     }
 
+    /**
+     * Set translation.
+     * 
+     * @param mixed $attribute 
+     * @param mixed $locale 
+     * @param mixed $value 
+     * @param bool $save 
+     * @return Translator|void 
+     */
     public function setTranslation($attribute, $locale, $value, $save = false)
     {
 
@@ -263,6 +283,14 @@ trait Translatable
         $this->attributes[$attribute] = $value;
     }
 
+    /**
+     * Set translations.
+     * 
+     * @param mixed $attribute 
+     * @param array $translations 
+     * @param bool $save 
+     * @return array 
+     */
     public function setTranslations($attribute, array $translations, $save = false)
     {
         $response = [];
@@ -298,10 +326,11 @@ trait Translatable
     }
 
     /**
-     * Delete Translations
-     * @param  array  $attributes [description]
-     * @param  [type] $locales    [description]
-     * @return [type]             [description]
+     * Delete translations.
+     * 
+     * @param array $attributes 
+     * @param array|string|null $locales 
+     * @return void 
      */
     public function deleteTranslations(array $attributes, $locales = null)
     {
@@ -317,10 +346,9 @@ trait Translatable
 
     /**
      * Save translations.
-     *
-     * @param object $translations
-     *
-     * @return void
+     * 
+     * @param mixed $translations 
+     * @return void 
      */
     public function saveTranslations($translations)
     {
