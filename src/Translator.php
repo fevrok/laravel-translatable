@@ -9,8 +9,25 @@ use LaravelArab\Tarjama\Models\Translation;
 
 class Translator implements ArrayAccess
 {
+    /**
+     * Holds translated model instance.
+     * 
+     * @var Model
+     */
     protected $model;
+
+    /**
+     * Get all of the current attributes on the model.
+     * 
+     * @var array
+     */
     protected $attributes = [];
+
+    /**
+     * Holds the current locale or fallback to english.
+     * 
+     * @var string
+     */
     protected $locale;
 
     /**
