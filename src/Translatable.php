@@ -5,10 +5,39 @@ namespace LaravelArab\Tarjama;
 use LaravelArab\Tarjama\Translator;
 use Illuminate\Database\Eloquent\Builder;
 use LaravelArab\Tarjama\Models\Translation;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
 trait Translatable
 {
+    /**
+     * Load translations relation.
+     *
+     * @return HasMany|Builder
+     */
+    public function translations(): HasMany
+    {
+        return $this->hasMany(Translation::class, 'foreign_key', $this->getKeyName())
+            ->where('table_name', $this->getTable())
+            ->whereIn('locale', config('tarjama.locales', [config('tarjama.locale')]));
+    }
+
+    /**
+     * Translate the whole model.
+     * 
+     * @param string|null $language 
+     * @param string|bool $fallback 
+     * @return Translator 
+     */
+    public function translate($language = null, $fallback = true)
+    {
+        if (!$this->relationLoaded('translations')) {
+            $this->load('translations');
+        }
+
+        return (new Translator($this))->translate($language, $fallback);
+    }
+
     /**
      * Check if this model can translate.
      *
@@ -51,18 +80,6 @@ trait Translatable
         }
         // set a translation for the current app locale
         return $this->setTranslation($key, config('app.locale', config('tarjama.locale')), $value, true);
-    }
-
-    /**
-     * Load translations relation.
-     *
-     * @return mixed
-     */
-    public function translations()
-    {
-        return $this->hasMany(Translation::class, 'foreign_key', $this->getKeyName())
-            ->where('table_name', $this->getTable())
-            ->whereIn('locale', config('tarjama.locales', [config('tarjama.locale')]));
     }
 
     /**
@@ -128,20 +145,18 @@ trait Translatable
     }
 
     /**
-     * Translate the whole model.
-     *
-     * @param null|string $language
-     * @param bool[string $fallback
-     *
-     * @return Translator
+     * Get attribute single language translation.
+     * 
+     * @param mixed $attribute 
+     * @param mixed|null $language 
+     * @param bool $fallback 
+     * @return mixed 
      */
-    public function translate($language = null, $fallback = true)
+    public function getTranslation($attribute, $language = null, $fallback = true)
     {
-        if (!$this->relationLoaded('translations')) {
-            $this->load('translations');
-        }
+        list($value) = $this->getTranslatedAttributeMeta($attribute, $language, $fallback);
 
-        return (new Translator($this))->translate($language, $fallback);
+        return $value;
     }
 
     /**
@@ -153,13 +168,6 @@ trait Translatable
      *
      * @return null
      */
-    public function getTranslation($attribute, $language = null, $fallback = true)
-    {
-        list($value) = $this->getTranslatedAttributeMeta($attribute, $language, $fallback);
-
-        return $value;
-    }
-
     public function getTranslationsOf($attribute, array $languages = null, $fallback = true)
     {
         if (is_null($languages)) {
