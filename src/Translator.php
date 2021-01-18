@@ -2,6 +2,7 @@
 
 namespace LaravelArab\Tarjama;
 
+use Exception;
 use ArrayAccess;
 use Illuminate\Database\Eloquent\Model;
 use LaravelArab\Tarjama\Models\Translation;
@@ -12,6 +13,12 @@ class Translator implements ArrayAccess
     protected $attributes = [];
     protected $locale;
 
+    /**
+     * Setup translator class.
+     * 
+     * @param Model $model 
+     * @return void 
+     */
     public function __construct(Model $model)
     {
         if (!$model->relationLoaded('translations')) {
@@ -34,6 +41,12 @@ class Translator implements ArrayAccess
         $this->attributes = $attributes;
     }
 
+    /**
+     * 
+     * @param mixed|null $locale 
+     * @param bool $fallback 
+     * @return $this 
+     */
     public function translate($locale = null, $fallback = true)
     {
         $this->locale = $locale;
@@ -98,16 +111,34 @@ class Translator implements ArrayAccess
         return $this->attributes;
     }
 
+    public function getLocale()
+    {
+        return $this->locale;
+    }
+
     public function getOriginalAttributes()
     {
         return $this->model->getAttributes();
     }
 
+    /**
+     * Get original attribute by key.
+     * 
+     * @param string $key 
+     * @return mixed 
+     */
     public function getOriginalAttribute($key)
     {
         return $this->model->getAttribute($key);
     }
 
+    /**
+     * Get model translations where column name equal to key.
+     * 
+     * @param string $key 
+     * @param string|null $locale 
+     * @return Model|null 
+     */
     public function getTranslationModel($key, $locale = null)
     {
         return $this->model->getRelation('translations')
@@ -116,11 +147,24 @@ class Translator implements ArrayAccess
             ->first();
     }
 
+    /**
+     * Collect and return modified attributes.
+     * 
+     * @return array 
+     */
     public function getModifiedAttributes()
     {
         return collect($this->attributes)->where('modified', 1)->all();
     }
 
+    /**
+     * Translate attribute.
+     * 
+     * @param string $attribute 
+     * @param array|string|null $locale 
+     * @param string|bool $fallback 
+     * @return $this 
+     */
     protected function translateAttribute($attribute, $locale = null, $fallback = true)
     {
         list($value, $locale, $exists) = $this->model->getTranslatedAttributeMeta($attribute, $locale, $fallback);
@@ -135,6 +179,12 @@ class Translator implements ArrayAccess
         return $this;
     }
 
+    /**
+     * Translate attribute to original.
+     * 
+     * @param string $attribute 
+     * @return $this 
+     */
     protected function translateAttributeToOriginal($attribute)
     {
         $this->attributes[$attribute] = [
@@ -147,6 +197,12 @@ class Translator implements ArrayAccess
         return $this;
     }
 
+    /**
+     * Get model field value.
+     * 
+     * @param string $name 
+     * @return mixed 
+     */
     public function __get($name)
     {
         if (!isset($this->attributes[$name])) {
@@ -164,6 +220,13 @@ class Translator implements ArrayAccess
         return $this->attributes[$name]['value'];
     }
 
+    /**
+     * Set value to attribute.
+     * 
+     * @param string $name 
+     * @param mixed $value 
+     * @return mixed 
+     */
     public function __set($name, $value)
     {
         $this->attributes[$name]['value'] = $value;
@@ -201,11 +264,6 @@ class Translator implements ArrayAccess
         unset($this->attributes[$offset]);
     }
 
-    public function getLocale()
-    {
-        return $this->locale;
-    }
-
     public function translationAttributeExists($name)
     {
         if (!isset($this->attributes[$name])) {
@@ -224,6 +282,13 @@ class Translator implements ArrayAccess
         return $this->attributes[$name]['modified'];
     }
 
+    /**
+     * Fill translation and save to database (in current locale).
+     * 
+     * @param string $key 
+     * @param mixed $value 
+     * @return mixed 
+     */
     public function createTranslation($key, $value)
     {
         if (!isset($this->attributes[$key])) {
@@ -255,6 +320,12 @@ class Translator implements ArrayAccess
             ->first();
     }
 
+    /**
+     * Create many translations.
+     * 
+     * @param array $translations 
+     * @return void 
+     */
     public function createTranslations(array $translations)
     {
         foreach ($translations as $key => $value) {
@@ -262,6 +333,12 @@ class Translator implements ArrayAccess
         }
     }
 
+    /**
+     * Delete translation by key and current locale.
+     * 
+     * @param string $key 
+     * @return bool 
+     */
     public function deleteTranslation($key)
     {
         if (!isset($this->attributes[$key])) {
@@ -292,6 +369,12 @@ class Translator implements ArrayAccess
         return true;
     }
 
+    /**
+     * Delete multiple keys translations.
+     * 
+     * @param array $keys 
+     * @return void 
+     */
     public function deleteTranslations(array $keys)
     {
         foreach ($keys as $key) {
@@ -299,15 +382,30 @@ class Translator implements ArrayAccess
         }
     }
 
+    /**
+     * Call whenever a method doesnt exists.
+     * 
+     * @param string $method 
+     * @param array $arguments 
+     * @return mixed 
+     * @throws Exception 
+     */
     public function __call($method, array $arguments)
     {
         if (!$this->model->hasTranslatorMethod($method)) {
-            throw new \Exception('Call to undefined method LaravelArab\Tarjama\Translator::' . $method . '()');
+            throw new Exception('Call to undefined method LaravelArab\Tarjama\Translator::' . $method . '()');
         }
 
         return call_user_func_array([$this, 'runTranslatorMethod'], [$method, $arguments]);
     }
 
+    /**
+     * Call model custom translator method.
+     * 
+     * @param string $method 
+     * @param array $arguments 
+     * @return mixed 
+     */
     public function runTranslatorMethod($method, array $arguments)
     {
         array_unshift($arguments, $this);

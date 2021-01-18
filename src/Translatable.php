@@ -188,9 +188,9 @@ trait Translatable
     /**
      * Get translated attribute meta.
      * 
-     * @param mixed $attribute 
-     * @param mixed|null $locale 
-     * @param bool $fallback 
+     * @param string $attribute 
+     * @param string|null $locale 
+     * @param string|bool $fallback 
      * @return array 
      */
     public function getTranslatedAttributeMeta($attribute, $locale = null, $fallback = true)
@@ -357,5 +357,35 @@ trait Translatable
                 $translation->save();
             }
         }
+    }
+
+    /**
+     * Check if attribute has custom translator method.
+     * 
+     * @param string $name 
+     * @return bool 
+     */
+    public function hasTranslatorMethod($name)
+    {
+        if (!isset($this->translatorMethods)) {
+            return false;
+        }
+
+        return isset($this->translatorMethods[$name]);
+    }
+
+    /**
+     * Get attribute custom translator method.
+     * 
+     * @param string $name 
+     * @return mixed 
+     */
+    public function getTranslatorMethod($name)
+    {
+        if (!$this->hasTranslatorMethod($name)) {
+            return;
+        }
+
+        return $this->translatorMethods[$name];
     }
 }
