@@ -19,7 +19,7 @@ trait Translatable
     {
         return $this->hasMany(Translation::class, 'foreign_key', $this->getKeyName())
             ->where('table_name', $this->getTable())
-            ->whereIn('locale', config('tarjama.locales', [config('tarjama.locale')]));
+            ->whereIn('locale', config('tarjama.locales', []));
     }
 
     /**
@@ -53,50 +53,18 @@ trait Translatable
     }
 
     /**
-     * Get attribute value.
-     * 
-     * @param string $key 
-     * @return mixed 
-     */
-    public function getAttributeValue($key)
-    {
-        if (!in_array($key, $this->getTranslatableAttributes())) {
-            return parent::getAttributeValue($key);
-        }
-
-        return $this->getTranslation($key, config('app.locale'));
-    }
-
-    /**
-     * Set a given attribute on the model.
-     * 
-     * @param string $key 
-     * @param mixed $value 
-     * @return $this 
-     */
-    public function setAttribute($key, $value)
-    {
-        // pass arrays and untranslatable attributes to the parent method
-        if (!in_array($key, $this->getTranslatableAttributes())) {
-            return parent::setAttribute($key, $value);
-        }
-        // set a translation for the current app locale
-        return $this->setTranslation($key, config('app.locale', config('tarjama.locale')), $value, true);
-    }
-
-    /**
      * This scope eager loads the translations for the default and the fallback locale only.
      * We can use this as a shortcut to improve performance in our application.
      * 
      * @param Builder $query 
      * @param string|null $locale 
      * @param string|bool $fallback 
-     * @return void 
+     * @return Builder
      */
     public function scopeWithTranslation(Builder $query, $locale = null, $fallback = true)
     {
         if (is_null($locale)) {
-            $locale = config('app.locale');
+            $locale = app()->getLocale();
         }
 
         if ($fallback === true) {
@@ -104,11 +72,51 @@ trait Translatable
         }
 
         $query->with(['translations' => function (Relation $query) use ($locale, $fallback) {
-            $query->where('locale', $locale);
+            $query->where(function ($q) use ($locale, $fallback) {
+                $q->where('locale', $locale);
 
-            if ($fallback !== false) {
-                $query->orWhere('locale', $fallback);
+                if ($fallback !== false) {
+                    $q->orWhere('locale', $fallback);
+                }
+            });
+        }]);
+    }
+
+    /**
+     * This scope eager loads the translations for the default and the fallback locale only.
+     * We can use this as a shortcut to improve performance in our application.
+     * 
+     * @param Builder $query 
+     * @param string|null|array $locales 
+     * @param string|bool $fallback 
+     * @return Builder
+     */
+    public function scopeWithTranslations(Builder $query, $locales = null, $fallback = true)
+    {
+        if (is_null($locales)) {
+            $locales = app()->getLocale();
+        }
+
+        if ($fallback === true) {
+            $fallback = config('app.fallback_locale', 'en');
+        }
+
+        $query->with(['translations' => function (Relation $query) use ($locales, $fallback) {
+            if (is_null($locales)) {
+                return;
             }
+
+            $query->where(function ($q) use ($locales, $fallback) {
+                if (is_array($locales)) {
+                    $q->whereIn('locale', $locales);
+                } else {
+                    $q->where('locale', $locales);
+                }
+
+                if ($fallback !== false) {
+                    $q->orWhere('locale', $fallback);
+                }
+            });
         }]);
     }
 
@@ -118,11 +126,12 @@ trait Translatable
      * @example  Class::whereTranslation('title', '=', 'zuhause', ['de', 'iu'])
      * @example  $query->whereTranslation('title', '=', 'zuhause', ['de', 'iu'])
      *
-     * @param string       $field    {required} the field your looking to find a value in.
-     * @param string       $operator {required} value you are looking for or a relation modifier such as LIKE, =, etc.
-     * @param string       $value    {optional} value you are looking for. Only use if you supplied an operator.
+     * @param Builder $query 
+     * @param string $field {required} the field your looking to find a value in.
+     * @param string $operator {required} value you are looking for or a relation modifier such as LIKE, =, etc.
+     * @param string $value {optional} value you are looking for. Only use if you supplied an operator.
      * @param string|array $locales  {optional} locale(s) you are looking for the field.
-     * @param bool         $default  {optional} if true checks for $value is in default database before checking translations.
+     * @param bool $default {optional} if true checks for $value is in default database before checking translations.
      *
      * @return Builder
      */
@@ -154,57 +163,6 @@ trait Translatable
     }
 
     /**
-     * This scope eager loads the translations for the default and the fallback locale only.
-     * We can use this as a shortcut to improve performance in our application.
-     * 
-     * @param Builder $query 
-     * @param string|null|array $locales 
-     * @param string|bool $fallback 
-     * @return void 
-     */
-    public function scopeWithTranslations(Builder $query, $locales = null, $fallback = true)
-    {
-        if (is_null($locales)) {
-            $locales = config('tarjama.locales');
-        }
-
-        if ($fallback === true) {
-            $fallback = config('app.fallback_locale', 'en');
-        }
-
-        $query->with(['translations' => function (Relation $query) use ($locales, $fallback) {
-            if (is_null($locales)) {
-                return;
-            }
-
-            if (is_array($locales)) {
-                $query->whereIn('locale', $locales);
-            } else {
-                $query->where('locale', $locales);
-            }
-
-            if ($fallback !== false) {
-                $query->orWhere('locale', $fallback);
-            }
-        }]);
-    }
-
-    /**
-     * Get attribute single language translation.
-     * 
-     * @param mixed $attribute 
-     * @param mixed|null $language 
-     * @param bool $fallback 
-     * @return mixed 
-     */
-    public function getTranslation($attribute, $language = null, $fallback = true)
-    {
-        list($value) = $this->getTranslatedAttributeMeta($attribute, $language, $fallback);
-
-        return $value;
-    }
-
-    /**
      * Get attribute translations of many launguages.
      * 
      * @param mixed $attribute 
@@ -220,10 +178,31 @@ trait Translatable
 
         $response = [];
         foreach ($languages as $language) {
-            $response[$language] = $this->getTranslation($attribute, $language, $fallback);
+            $response[$language] = $this->getTranslatedAttribute($attribute, $language, $fallback);
         }
 
         return $response;
+    }
+
+    /**
+     * Get a single translated attribute.
+     *
+     * @param $attribute
+     * @param null $language
+     * @param bool $fallback
+     *
+     * @return null
+     */
+    public function getTranslatedAttribute($attribute, $language = null, $fallback = true)
+    {
+        // If multilingual is not enabled don't check for translations
+        if (!config('tarjama.enabled')) {
+            return $this->getAttributeValue($attribute);
+        }
+
+        list($value) = $this->getTranslatedAttributeMeta($attribute, $language, $fallback);
+
+        return $value;
     }
 
     /**
@@ -236,26 +215,28 @@ trait Translatable
      */
     public function getTranslatedAttributeMeta($attribute, $locale = null, $fallback = true)
     {
-        $default = config('tarjama.locale');
         // Attribute is translatable
+        //
         if (!in_array($attribute, $this->getTranslatableAttributes())) {
-            return [parent::getAttributeValue($attribute), $default, false];
-        }
-
-        if (!$this->relationLoaded('translations')) {
-            $this->load('translations');
+            return [$this->getAttribute($attribute), config('tarjama.locale'), false];
         }
 
         if (is_null($locale)) {
-            $locale = config('app.locale');
+            $locale = app()->getLocale();
         }
 
         if ($fallback === true) {
             $fallback = config('app.fallback_locale', 'en');
         }
 
+        $default = config('tarjama.locale');
+
         if ($default == $locale) {
-            return [parent::getAttributeValue($attribute), $default, true];
+            return [$this->getAttribute($attribute), $default, true];
+        }
+
+        if (!$this->relationLoaded('translations')) {
+            $this->load('translations');
         }
 
         $translations = $this->getRelation('translations')
@@ -268,11 +249,11 @@ trait Translatable
         }
 
         if ($fallback == $locale) {
-            return [parent::getAttributeValue($attribute), $locale, false];
+            return [$this->getAttribute($attribute), $locale, false];
         }
 
         if ($fallback == $default) {
-            return [parent::getAttributeValue($attribute), $locale, false];
+            return [$this->getAttribute($attribute), $locale, false];
         }
 
         $fallbackTranslation = $translations->where('locale', $fallback)->first();
@@ -295,44 +276,14 @@ trait Translatable
     }
 
     /**
-     * Set translation.
+     * Set translations attributes.
      * 
-     * @param mixed $attribute 
-     * @param mixed $locale 
-     * @param mixed $value 
-     * @param bool $save 
-     * @return Translator|void 
-     */
-    public function setTranslation($attribute, $locale, $value, $save = false)
-    {
-
-        if (!$this->relationLoaded('translations')) {
-            $this->load('translations');
-        }
-
-        $default = config('tarjama.locale', 'en');
-
-        if ($locale != $default) {
-            $tranlator = $this->translate($locale, false);
-            $tranlator->$attribute = $value;
-            if ($save) {
-                $tranlator->save();
-            }
-            return $tranlator;
-        }
-
-        $this->attributes[$attribute] = $value;
-    }
-
-    /**
-     * Set translations.
-     * 
-     * @param mixed $attribute 
+     * @param string $attribute 
      * @param array $translations 
      * @param bool $save 
      * @return array 
      */
-    public function setTranslations($attribute, array $translations, $save = false)
+    public function setAttributeTranslations($attribute, array $translations, $save = false)
     {
         $response = [];
 
@@ -344,7 +295,7 @@ trait Translatable
         $locales = config('tarjama.locales', [$default]);
 
         foreach ($locales as $locale) {
-            if (!isset($translations[$locale])) {
+            if (empty($translations[$locale])) {
                 continue;
             }
 
@@ -364,25 +315,6 @@ trait Translatable
         }
 
         return $response;
-    }
-
-    /**
-     * Delete translations.
-     * 
-     * @param array $attributes 
-     * @param array|string|null $locales 
-     * @return void 
-     */
-    public function deleteTranslations(array $attributes, $locales = null)
-    {
-        $this->translations()
-            ->whereIn('column_name', $attributes)
-            ->when(!is_null($locales), function ($query) use ($locales) {
-                $method = is_array($locales) ? 'whereIn' : 'where';
-
-                return $query->$method('locale', $locales);
-            })
-            ->delete();
     }
 
     /**
@@ -428,5 +360,43 @@ trait Translatable
         }
 
         return $this->translatorMethods[$name];
+    }
+
+    /**
+     * Delete attributes translations.
+     * 
+     * @param array $attributes 
+     * @param array|string|null $locales 
+     * @return void 
+     */
+    public function deleteAttributeTranslations(array $attributes, $locales = null)
+    {
+        $this->translations()
+            ->whereIn('column_name', $attributes)
+            ->when(!is_null($locales), function ($query) use ($locales) {
+                $method = is_array($locales) ? 'whereIn' : 'where';
+
+                return $query->$method('locale', $locales);
+            })
+            ->delete();
+    }
+
+    /**
+     * Delete Attribute translation.
+     * 
+     * @param string $attribute 
+     * @param array|string|null $locales 
+     * @return void 
+     */
+    public function deleteAttributeTranslation($attribute, $locales = null)
+    {
+        $this->translations()
+            ->where('column_name', $attribute)
+            ->when(!is_null($locales), function ($query) use ($locales) {
+                $method = is_array($locales) ? 'whereIn' : 'where';
+
+                return $query->$method('locale', $locales);
+            })
+            ->delete();
     }
 }
