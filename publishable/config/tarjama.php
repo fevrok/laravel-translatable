@@ -1,10 +1,13 @@
 <?php
 
 return [
+   /**
+    * Set whether or not the translations is enbaled.
+    */
+   'enabled' => true,
 
    /**
-    * Default Locale || Root columns locale
-    * We will use this locale if config('app.locale') translation not exist
+    * Select default language
     */
    'locale' => 'en',
 
