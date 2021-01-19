@@ -13,10 +13,17 @@ class TarjamaServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->loadMigrationsFrom(__DIR__ . '/../publishable/database/migrations');
         $this->publishes([
             __DIR__ . '/../publishable/config/tarjama.php' => config_path('tarjama.php'),
         ]);
+
+        if (!class_exists('CreateTranslationsTable')) {
+            $timestamp = date('Y_m_d_His', time());
+
+            $this->publishes([
+                __DIR__ . '/../publishable/database/migrations/create_translations_table.php.stub' => database_path("/migrations/{$timestamp}_create_translations_table.php"),
+            ], 'migrations');
+        }
     }
 
     /**

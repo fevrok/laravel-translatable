@@ -37,11 +37,19 @@
       "LaravelArab\\Tarjama\\": "src"
     }
   },
+  "autoload-dev": {
+    "psr-4": {
+        "LaravelArab\\Tarjama\\Tests\\": "tests"
+    }
+  },
   "extra": {
     "laravel": {
       "providers": [
         "LaravelArab\\Tarjama\\TarjamaServiceProvider"
       ]
     }
+  },
+  "scripts": {
+    "test": "vendor/bin/phpunit"
   }
 }
