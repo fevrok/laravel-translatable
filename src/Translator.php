@@ -4,10 +4,11 @@ namespace LaravelArab\Tarjama;
 
 use Exception;
 use ArrayAccess;
+use JsonSerializable;
 use Illuminate\Database\Eloquent\Model;
 use LaravelArab\Tarjama\Models\Translation;
 
-class Translator implements ArrayAccess
+class Translator implements ArrayAccess, JsonSerializable
 {
     /**
      * Holds translated model instance.
@@ -43,7 +44,7 @@ class Translator implements ArrayAccess
         }
 
         $this->model = $model;
-        $this->locale = config('app.default', 'en');
+        $this->locale = config('tarjama.default', 'en');
         $attributes = [];
 
         foreach ($this->model->getAttributes() as $attribute => $value) {
@@ -430,5 +431,17 @@ class Translator implements ArrayAccess
         $method = $this->model->getTranslatorMethod($method);
 
         return call_user_func_array([$this->model, $method], $arguments);
+    }
+
+    /**
+     * Serialize raw attributes.
+     * 
+     * @return array 
+     */
+    public function jsonSerialize()
+    {
+        return array_map(function ($array) {
+            return $array['value'];
+        }, $this->getRawAttributes());
     }
 }
