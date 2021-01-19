@@ -76,7 +76,7 @@ abstract class TestCase extends OrchestraTestCase
     protected function seedModels(...$modelClasses)
     {
         collect($modelClasses)->each(function (string $modelClass) {
-            foreach (range(1, 0) as $index) {
+            foreach (range(1, 2) as $index) {
                 $name = "name {$index}";
 
                 $modelClass::create([

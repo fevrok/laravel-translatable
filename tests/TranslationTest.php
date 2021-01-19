@@ -242,26 +242,43 @@ class TranslationTest extends TestCase
 
     public function testSearchingTranslations()
     {
+        DB::table('translations')->insert([
+            'table_name'  => 'articles',
+            'column_name' => 'slug',
+            'foreign_key' => 1,
+            'locale'      => 'pt',
+            'value'       => 'nome-1',
+        ]);
+
+        DB::table('translations')->insert([
+            'table_name'  => 'articles',
+            'column_name' => 'slug',
+            'foreign_key' => 2,
+            'locale'      => 'pt',
+            'value'       => 'nome-2',
+        ]);
+
         //Default locale
-        $this->assertEquals(ActuallyTranslatableModel::whereTranslation('slug', 'name-0')->count(), 1);
+        $this->assertEquals(ActuallyTranslatableModel::whereTranslation('slug', 'nome-1')->count(), 1);
 
         //Default locale, but default excluded
-        $this->assertEquals(ActuallyTranslatableModel::whereTranslation('slug', '=', 'name-0', [], false)->count(), 0);
+        $this->assertEquals(ActuallyTranslatableModel::whereTranslation('slug', '=', 'nome-1', [], false)->count(), 0);
+
 
         //Translation, all locales
-        $this->assertEquals(ActuallyTranslatableModel::whereTranslation('slug', 'name-1')->count(), 1);
+        $this->assertEquals(ActuallyTranslatableModel::whereTranslation('slug', 'nome-2')->count(), 1);
 
         //Translation, wrong locale-array
-        $this->assertEquals(ActuallyTranslatableModel::whereTranslation('slug', '=', 'name-1', ['de'])->count(), 0);
+        $this->assertEquals(ActuallyTranslatableModel::whereTranslation('slug', '=', 'nome-2', ['de'])->count(), 0);
 
         //Translation, correct locale-array
-        $this->assertEquals(ActuallyTranslatableModel::whereTranslation('slug', '=', 'name-1', ['de', 'pt'])->count(), 1);
+        $this->assertEquals(ActuallyTranslatableModel::whereTranslation('slug', '=', 'nome-2', ['de', 'pt'])->count(), 1);
 
         //Translation, wrong locale
-        $this->assertEquals(ActuallyTranslatableModel::whereTranslation('slug', '=', 'name-1', 'de')->count(), 0);
+        $this->assertEquals(ActuallyTranslatableModel::whereTranslation('slug', '=', 'nome-2', 'de')->count(), 0);
 
         //Translation, correct locale
-        $this->assertEquals(ActuallyTranslatableModel::whereTranslation('slug', '=', 'name-1', 'pt')->count(), 1);
+        $this->assertEquals(ActuallyTranslatableModel::whereTranslation('slug', '=', 'nome-2', 'pt')->count(), 1);
     }
 }
 
