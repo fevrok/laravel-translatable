@@ -2,7 +2,9 @@
 
 namespace LaravelArab\Tarjama;
 
+use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\ServiceProvider;
+use LaravelArab\Tarjama\Facades\Tarjama as TarjamaFacade;
 
 class TarjamaServiceProvider extends ServiceProvider
 {
@@ -37,5 +39,12 @@ class TarjamaServiceProvider extends ServiceProvider
             __DIR__ . '/../publishable/config/tarjama.php',
             'tarjama'
         );
+
+        $loader = AliasLoader::getInstance();
+        $loader->alias('Tarjama', TarjamaFacade::class);
+
+        $this->app->singleton('tarjama', function () {
+            return new Tarjama();
+        });
     }
 }
