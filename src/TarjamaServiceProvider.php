@@ -4,7 +4,9 @@ namespace LaravelArab\Tarjama;
 
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Database\Eloquent\Collection;
 use LaravelArab\Tarjama\Facades\Tarjama as TarjamaFacade;
+use LaravelArab\Tarjama\Collection as TranslatorCollection;
 
 class TarjamaServiceProvider extends ServiceProvider
 {
@@ -26,6 +28,16 @@ class TarjamaServiceProvider extends ServiceProvider
                 __DIR__ . '/../publishable/database/migrations/create_translations_table.php.stub' => database_path("/migrations/{$timestamp}_create_translations_table.php"),
             ], 'migrations');
         }
+
+        Collection::macro('translate', function () {
+            $transtors = [];
+
+            foreach ($this->all() as $item) {
+                $transtors[] = call_user_func_array([$item, 'translate'], func_get_args());
+            }
+
+            return new TranslatorCollection($transtors);
+        });
     }
 
     /**
