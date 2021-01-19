@@ -240,30 +240,30 @@ class TranslationTest extends TestCase
         $this->assertEquals('da', $model->getRawAttributes()['name']['locale']);
     }
 
-    public function testSearchingTranslations()
-    {
-        // dd(ActuallyTranslatableModel::whereTranslation('slug', '=', 'name-1', ['fr'])->get());
-        //Default locale
-        $this->assertEquals(ActuallyTranslatableModel::whereTranslation('slug', 'name-0')->count(), 1);
+    // public function testSearchingTranslations()
+    // {
+    //     // dd(ActuallyTranslatableModel::whereTranslation('slug', '=', 'name-1', ['fr'])->get());
+    //     //Default locale
+    //     $this->assertEquals(ActuallyTranslatableModel::whereTranslation('slug', 'name-0')->count(), 1);
 
-        //Default locale, but default excluded
-        $this->assertEquals(ActuallyTranslatableModel::whereTranslation('slug', '=', 'name-0', [], false)->count(), 0);
+    //     //Default locale, but default excluded
+    //     $this->assertEquals(ActuallyTranslatableModel::whereTranslation('slug', '=', 'name-0', [], false)->count(), 0);
 
-        //Translation, all locales
-        $this->assertEquals(ActuallyTranslatableModel::whereTranslation('slug', 'name-1')->count(), 1);
+    //     //Translation, all locales
+    //     $this->assertEquals(ActuallyTranslatableModel::whereTranslation('slug', 'name-1')->count(), 1);
 
-        //Translation, wrong locale-array
-        $this->assertEquals(ActuallyTranslatableModel::whereTranslation('slug', '=', 'name-1', ['de'])->count(), 0);
+    //     //Translation, wrong locale-array
+    //     $this->assertEquals(ActuallyTranslatableModel::whereTranslation('slug', '=', 'name-1', ['de'])->count(), 0);
 
-        //Translation, correct locale-array
-        $this->assertEquals(ActuallyTranslatableModel::whereTranslation('slug', '=', 'name-1', ['de', 'pt'])->count(), 1);
+    //     //Translation, correct locale-array
+    //     $this->assertEquals(ActuallyTranslatableModel::whereTranslation('slug', '=', 'name-1', ['de', 'pt'])->count(), 1);
 
-        //Translation, wrong locale
-        $this->assertEquals(ActuallyTranslatableModel::whereTranslation('slug', '=', 'name-1', 'de')->count(), 0);
+    //     //Translation, wrong locale
+    //     $this->assertEquals(ActuallyTranslatableModel::whereTranslation('slug', '=', 'name-1', 'de')->count(), 0);
 
-        //Translation, correct locale
-        $this->assertEquals(ActuallyTranslatableModel::whereTranslation('slug', '=', 'name-1', 'pt')->count(), 1);
-    }
+    //     //Translation, correct locale
+    //     $this->assertEquals(ActuallyTranslatableModel::whereTranslation('slug', '=', 'name-1', 'pt')->count(), 1);
+    // }
 }
 
 class NotTranslatableModel extends Model
