@@ -13,6 +13,19 @@ class Article extends Model
 
     protected $guarded = [];
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'name',
+        'description',
+        'slug',
+    ];
+
+    protected $translatable = ['name'];
+
     public function categories()
     {
         return $this->belongsToMany(Category::class);
