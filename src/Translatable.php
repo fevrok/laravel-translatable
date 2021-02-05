@@ -215,7 +215,7 @@ trait Translatable
         // Attribute is translatable
         //
         if (!in_array($attribute, $this->getTranslatableAttributes())) {
-            return [$this->getAttribute($attribute), config('app.locale'), false];
+            return [$this->getAttribute($attribute), config('tarjama.locale'), false];
         }
 
         if (is_null($locale)) {
@@ -226,7 +226,7 @@ trait Translatable
             $fallback = config('app.fallback_locale', 'en');
         }
 
-        $default = config('app.locale');
+        $default = config('tarjama.locale');
 
         if ($default == $locale) {
             return [$this->getAttribute($attribute), $default, true];
@@ -304,7 +304,7 @@ trait Translatable
             $this->load('translations');
         }
 
-        $default = config('app.locale');
+        $default = config('tarjama.locale', 'en');
 
         foreach ($translations as $locale  => $translation) {
             if (empty($translation)) {

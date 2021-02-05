@@ -6,4 +6,9 @@ return [
     */
    'enabled' => true,
 
+   /**
+    * Select default language
+    */
+   'locale' => 'en',
+
 ];
