@@ -18,8 +18,7 @@ trait Translatable
     public function translations(): HasMany
     {
         return $this->hasMany(Translation::class, 'foreign_key', $this->getKeyName())
-            ->where('table_name', $this->getTable())
-            ->whereIn('locale', config('tarjama.locales', []));
+            ->where('table_name', $this->getTable());
     }
 
     /**
@@ -173,7 +172,7 @@ trait Translatable
     public function getTranslationsOf($attribute, array $languages = null, $fallback = true)
     {
         if (is_null($languages)) {
-            $languages = config('tarjama.locales', [config('app.locale')]);
+            $languages = [config('app.locale')];
         }
 
         $response = [];
@@ -292,20 +291,19 @@ trait Translatable
         }
 
         $default = config('tarjama.locale', 'en');
-        $locales = config('tarjama.locales', [$default]);
 
-        foreach ($locales as $locale) {
-            if (empty($translations[$locale])) {
+        foreach ($translations as $locale  => $translation) {
+            if (empty($translation)) {
                 continue;
             }
 
             if ($locale == $default) {
-                $this->$attribute = $translations[$locale];
+                $this->$attribute = $translation;
                 continue;
             }
 
             $tranlator = $this->translate($locale, false);
-            $tranlator->$attribute = $translations[$locale];
+            $tranlator->$attribute = $translation;
 
             if ($save) {
                 $tranlator->save();
