@@ -44,7 +44,7 @@ class Translator implements ArrayAccess, JsonSerializable
         }
 
         $this->model = $model;
-        $this->locale = config('tarjama.default', 'en');
+        $this->locale = config('app.locale');
         $attributes = [];
 
         foreach ($this->model->getAttributes() as $attribute => $value) {
@@ -207,7 +207,7 @@ class Translator implements ArrayAccess, JsonSerializable
     {
         $this->attributes[$attribute] = [
             'value'    => $this->model->attributes[$attribute],
-            'locale'   => config('tarjama.default', 'en'),
+            'locale'   => config('app.locale'),
             'exists'   => true,
             'modified' => false,
         ];
