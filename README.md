@@ -22,7 +22,7 @@ else you have to add the service provider to app/config/app.php
 LaravelArab\Tarjama\TarjamaServiceProvider::class,
 ```
 
-If you want to change the default locale, you must publish the config file:
+publish config file and migration.
 
 ```bash
 php artisan vendor:publish --provider="LaravelArab\Tarjama\TarjamaServiceProvider"
@@ -58,6 +58,47 @@ class Item extends Model
     protected $translatable = [
         'name', 'color'
     ];
+}
+```
+
+### Custom translations model
+
+To get started, publish the assets again this will create new migration update table name to your desire.
+
+
+CustomTranslation.php
+```php
+class CustomTranslation extends \LaravelArab\Tarjama\Models\Translation
+{
+    protected $table = 'custom_translations';
+}
+```
+
+Add `$translations_model` property and  give it your custom translations class.
+
+```php
+use Illuminate\Database\Eloquent\Model;
+use LaravelArab\Tarjama\Translatable;
+
+class Item extends Model
+{
+    use Translatable;
+
+    /**
+      * The attributes that are Translatable.
+      *
+      * @var array
+      */
+    protected $translatable = [
+        'name'
+    ];
+	
+    /**
+      * The model used to get translatios.
+      *
+      * @var string
+      */
+    protected $translations_model = CustomTranslation::class;
 }
 ```
 

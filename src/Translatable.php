@@ -17,7 +17,7 @@ trait Translatable
      */
     public function translations(): HasMany
     {
-        return $this->hasMany(Translation::class, 'foreign_key', $this->getKeyName())
+        return $this->hasMany($this->translationsModel(), 'foreign_key', $this->getKeyName())
             ->where('table_name', $this->getTable());
     }
 
@@ -70,7 +70,7 @@ trait Translatable
             $fallback = config('app.fallback_locale', 'en');
         }
 
-        $query->with(['translations' => function (Relation $query) use ($locale, $fallback) {
+        $query->with([$this->translationsModel() => function (Relation $query) use ($locale, $fallback) {
             $query->where(function ($q) use ($locale, $fallback) {
                 $q->where('locale', $locale);
 
@@ -100,7 +100,7 @@ trait Translatable
             $fallback = config('app.fallback_locale', 'en');
         }
 
-        $query->with(['translations' => function (Relation $query) use ($locales, $fallback) {
+        $query->with([$this->translationsModel() => function (Relation $query) use ($locales, $fallback) {
             if (is_null($locales)) {
                 return;
             }
@@ -134,22 +134,20 @@ trait Translatable
      *
      * @return Builder
      */
-    public static function scopeWhereTranslation($query, $field, $operator, $value = null, $locales = null, $default = true)
+    public function scopeWhereTranslation($query, $field, $operator, $value = null, $locales = null, $default = true)
     {
         if ($locales && !is_array($locales)) {
             $locales = [$locales];
         }
+
         if (!isset($value)) {
             $value = $operator;
             $operator = '=';
         }
 
-        $self = new static();
-        $table = $self->getTable();
-
         return $query->whereIn(
-            $self->getKeyName(),
-            Translation::where('table_name', $table)
+            $this->getKeyName(),
+            $this->translationsModel()::where('table_name', $this->getTable())
                 ->where('column_name', $field)
                 ->where('value', $operator, $value)
                 ->when(!is_null($locales), function ($query) use ($locales) {
@@ -275,7 +273,23 @@ trait Translatable
     }
 
     /**
-     * Set translations attributes.
+     * Get translations model.
+     *
+     * @return Translation
+     */
+    public function translationsModel(): Translation
+    {
+        $model = Translation::class;
+
+        if (property_exists($this, 'translations_model')) {
+            $model = $this->translations_model;
+        }
+
+        return app($model);
+    }
+
+    /**
+     * Set translation.
      * 
      * @param string $attribute 
      * @param array $translations 
