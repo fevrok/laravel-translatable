@@ -90,16 +90,14 @@ class Translator implements ArrayAccess, JsonSerializable
             if ($attribute['exists']) {
                 $translation = $this->getTranslationModel($key);
             } else {
-                $translation = Translation::where('table_name', $this->model->getTable())
+                $translation = $this->translationsModel()::where('table_name', $this->model->getTable())
                     ->where('column_name', $key)
                     ->where('foreign_key', $this->model->getKey())
                     ->where('locale', $this->locale)
                     ->first();
             }
 
-            if (is_null($translation)) {
-                $translation = new Translation();
-            }
+            $translation = $translation ?? $this->translationsModel();
 
             $translation->fill([
                 'table_name'  => $this->model->getTable(),
@@ -122,6 +120,16 @@ class Translator implements ArrayAccess, JsonSerializable
     public function getModel()
     {
         return $this->model;
+    }
+
+    /**
+     * Return translations model
+     * 
+     * @return Translation 
+     */
+    public function translationsModel()
+    {
+        return $this->getModel()->translationsModel();
     }
 
     public function getRawAttributes()
@@ -317,7 +325,7 @@ class Translator implements ArrayAccess, JsonSerializable
             return false;
         }
 
-        $translation = new Translation();
+        $translation = $this->translationsModel();
         $translation->fill([
             'table_name'  => $this->model->getTable(),
             'column_name' => $key,
@@ -370,7 +378,7 @@ class Translator implements ArrayAccess, JsonSerializable
         $translations = $this->model->getRelation('translations');
         $locale = $this->locale;
 
-        Translation::where('table_name', $this->model->getTable())
+        $this->translationsModel()::where('table_name', $this->model->getTable())
             ->where('column_name', $key)
             ->where('foreign_key', $this->model->getKey())
             ->where('locale', $locale)
