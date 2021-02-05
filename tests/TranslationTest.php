@@ -16,9 +16,6 @@ class TranslationTest extends TestCase
     {
         parent::setUp();
 
-        // Add another language
-        config()->set('tarjama.locales', ['en', 'da']);
-
         // Turn on multilingual
         config()->set('tarjama.enabled', true);
     }
