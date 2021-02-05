@@ -28,20 +28,6 @@ If you want to change the default locale, you must publish the config file:
 php artisan vendor:publish --provider="LaravelArab\Tarjama\TarjamaServiceProvider"
 ```
 
-This is the contents of the published file:
-
-```php
-return [
-
-   /**
-    * Default Locale || Root columns locale
-    * We will use this locale if config('app.locale') translation not exist
-    */
-   'locale' => 'en',
-
-];
-```
-
 next migrate translations table
 
 ```bash
