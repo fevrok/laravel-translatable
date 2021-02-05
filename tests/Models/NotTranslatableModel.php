@@ -5,11 +5,9 @@ namespace LaravelArab\Tarjama\Tests\Models;
 use LaravelArab\Tarjama\Translatable;
 use Illuminate\Database\Eloquent\Model;
 
-class Category extends Model
+class NotTranslatableModel extends Model
 {
-    use Translatable;
-
-    protected $table = 'categories';
+    protected $table = 'articles';
 
     protected $guarded = [];
 
@@ -23,11 +21,4 @@ class Category extends Model
         'description',
         'slug',
     ];
-
-    protected $translatable = ['name'];
-
-    public function articles()
-    {
-        return $this->hasMany(Article::class);
-    }
 }

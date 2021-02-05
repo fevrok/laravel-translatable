@@ -6,9 +6,9 @@ use Illuminate\Support\Facades\DB;
 use LaravelArab\Tarjama\Collection;
 use LaravelArab\Tarjama\Translator;
 use LaravelArab\Tarjama\Translatable;
-use Illuminate\Database\Eloquent\Model;
 use LaravelArab\Tarjama\Facades\Tarjama;
-use LaravelArab\Tarjama\Tests\Models\Article;
+use LaravelArab\Tarjama\Tests\Models\TarjamaModel;
+use LaravelArab\Tarjama\Tests\Models\NotTranslatableModel;
 
 class TranslationTest extends TestCase
 {
@@ -22,8 +22,7 @@ class TranslationTest extends TestCase
 
     public function testCheckingModelIsTranslatable()
     {
-        $this->assertTrue(Tarjama::translatable(Article::class));
-        $this->assertTrue(Tarjama::translatable(Article::class));
+        $this->assertTrue(Tarjama::translatable(TranslatableModel::class));
     }
 
     public function testCheckingModelIsNotTranslatable()
@@ -34,13 +33,13 @@ class TranslationTest extends TestCase
 
     public function testGettingModelTranslatableAttributes()
     {
-        $this->assertEquals(['name'], (new Article())->getTranslatableAttributes());
+        $this->assertEquals(['name'], (new TranslatableModel())->getTranslatableAttributes());
         $this->assertEquals([], (new ActuallyTranslatableModel())->getTranslatableAttributes());
     }
 
     public function testGettingTranslatorCollection()
     {
-        $collection = Article::all()->translate('da');
+        $collection = TranslatableModel::all()->translate('da');
 
         $this->assertInstanceOf(Collection::class, $collection);
         $this->assertInstanceOf(Translator::class, $collection[0]);
@@ -48,7 +47,7 @@ class TranslationTest extends TestCase
 
     public function testGettingTranslatorModelOfNonExistingTranslation()
     {
-        $model = Article::first()->translate('da');
+        $model = TranslatableModel::first()->translate('da');
 
         $this->assertInstanceOf(Translator::class, $model);
         $this->assertEquals('da', $model->getLocale());
@@ -69,7 +68,7 @@ class TranslationTest extends TestCase
             'value'       => 'Foo Bar Post',
         ]);
 
-        $model = Article::first()->translate('da');
+        $model = TranslatableModel::first()->translate('da');
 
         $this->assertInstanceOf(Translator::class, $model);
         $this->assertEquals('da', $model->getLocale());
@@ -82,7 +81,7 @@ class TranslationTest extends TestCase
 
     public function testSavingNonExistingTranslatorModel()
     {
-        $model = Article::first()->translate('da');
+        $model = TranslatableModel::first()->translate('da');
 
         $this->assertInstanceOf(Translator::class, $model);
         $this->assertEquals('da', $model->getLocale());
@@ -108,7 +107,7 @@ class TranslationTest extends TestCase
         $this->assertEquals('da', $model->getRawAttributes()['name']['locale']);
         $this->assertEquals('name 1', $model->getOriginalAttribute('name'));
 
-        $model = Article::first()->translate('da');
+        $model = TranslatableModel::first()->translate('da');
 
         $this->assertInstanceOf(Translator::class, $model);
         $this->assertEquals('da', $model->getLocale());
@@ -129,7 +128,7 @@ class TranslationTest extends TestCase
             'value'       => 'Foo Bar Post',
         ]);
 
-        $model = Article::first()->translate('da');
+        $model = TranslatableModel::first()->translate('da');
 
         $this->assertInstanceOf(Translator::class, $model);
         $this->assertEquals('da', $model->getLocale());
@@ -155,7 +154,7 @@ class TranslationTest extends TestCase
         $this->assertEquals('da', $model->getRawAttributes()['name']['locale']);
         $this->assertEquals('name 1', $model->getOriginalAttribute('name'));
 
-        $model = Article::first()->translate('da');
+        $model = TranslatableModel::first()->translate('da');
 
         $this->assertInstanceOf(Translator::class, $model);
         $this->assertEquals('da', $model->getLocale());
@@ -168,7 +167,7 @@ class TranslationTest extends TestCase
 
     public function testGettingTranslationMetaDataFromTranslator()
     {
-        $model = Article::first()->translate('da');
+        $model = TranslatableModel::first()->translate('da');
 
         $this->assertFalse($model->translationAttributeExists('name'));
         $this->assertFalse($model->translationAttributeModified('name'));
@@ -176,11 +175,11 @@ class TranslationTest extends TestCase
 
     public function testCreatingNewTranslation()
     {
-        $model = Article::first()->translate('da');
+        $model = TranslatableModel::first()->translate('da');
 
         $model->createTranslation('name', 'Danish Title Here');
 
-        $model = Article::first()->translate('da');
+        $model = TranslatableModel::first()->translate('da');
 
         $this->assertInstanceOf(Translator::class, $model);
         $this->assertEquals('da', $model->getLocale());
@@ -200,7 +199,7 @@ class TranslationTest extends TestCase
             'value'       => 'Title',
         ]);
 
-        $model = Article::first()->translate('da');
+        $model = TranslatableModel::first()->translate('da');
 
         $this->assertInstanceOf(Translator::class, $model);
         $this->assertEquals('da', $model->getLocale());
@@ -227,7 +226,7 @@ class TranslationTest extends TestCase
         $this->assertFalse($model->getRawAttributes()['name']['modified']);
         $this->assertEquals('da', $model->getRawAttributes()['name']['locale']);
 
-        $model = Article::first()->translate('da');
+        $model = TranslatableModel::first()->translate('da');
 
         $this->assertInstanceOf(Translator::class, $model);
         $this->assertEquals('da', $model->getLocale());
@@ -256,71 +255,90 @@ class TranslationTest extends TestCase
         ]);
 
         //Default locale
-        $this->assertEquals(ActuallyTranslatableModel::whereTranslation('slug', 'nome-1')->count(), 1);
+        $this->assertEquals(1, ActuallyTranslatableModel::whereTranslation('slug', 'nome-1')->count());
 
         //Default locale, but default excluded
-        $this->assertEquals(ActuallyTranslatableModel::whereTranslation('slug', '=', 'nome-1', [], false)->count(), 0);
-
+        $this->assertEquals(0, ActuallyTranslatableModel::whereTranslation('slug', '=', 'nome-1', [], false)->count());
 
         //Translation, all locales
-        $this->assertEquals(ActuallyTranslatableModel::whereTranslation('slug', 'nome-2')->count(), 1);
+        $this->assertEquals(1, ActuallyTranslatableModel::whereTranslation('slug', 'nome-2')->count());
 
         //Translation, wrong locale-array
-        $this->assertEquals(ActuallyTranslatableModel::whereTranslation('slug', '=', 'nome-2', ['de'])->count(), 0);
+        $this->assertEquals(0, ActuallyTranslatableModel::whereTranslation('slug', '=', 'nome-2', ['de'])->count());
 
         //Translation, correct locale-array
-        $this->assertEquals(ActuallyTranslatableModel::whereTranslation('slug', '=', 'nome-2', ['de', 'pt'])->count(), 1);
+        $this->assertEquals(1, ActuallyTranslatableModel::whereTranslation('slug', '=', 'nome-2', ['de', 'pt'])->count());
 
         //Translation, wrong locale
-        $this->assertEquals(ActuallyTranslatableModel::whereTranslation('slug', '=', 'nome-2', 'de')->count(), 0);
+        $this->assertEquals(0, ActuallyTranslatableModel::whereTranslation('slug', '=', 'nome-2', 'de')->count());
 
         //Translation, correct locale
-        $this->assertEquals(ActuallyTranslatableModel::whereTranslation('slug', '=', 'nome-2', 'pt')->count(), 1);
+        $this->assertEquals(1, ActuallyTranslatableModel::whereTranslation('slug', '=', 'nome-2', 'pt')->count());
+    }
+
+    public function testUsingCustomTranslationsTable()
+    {
+        TarjamaModel::create([
+            'table_name'  => 'articles',
+            'column_name' => 'slug',
+            'foreign_key' => 1,
+            'locale'      => 'pt',
+            'value'       => 'nome-1',
+        ]);
+
+        TarjamaModel::create([
+            'table_name'  => 'articles',
+            'column_name' => 'slug',
+            'foreign_key' => 2,
+            'locale'      => 'pt',
+            'value'       => 'nome-2',
+        ]);
+
+        //Default locale
+        $this->assertEquals(1, CustomTranslatableModel::whereTranslation('slug', 'nome-1')->count());
+
+        //Default locale, but default excluded
+        $this->assertEquals(0, CustomTranslatableModel::whereTranslation('slug', '=', 'nome-1', [], false)->count());
+
+        //Translation, all locales
+        $this->assertEquals(1, CustomTranslatableModel::whereTranslation('slug', 'nome-2')->count());
+
+        //Translation, wrong locale-array
+        $this->assertEquals(0, CustomTranslatableModel::whereTranslation('slug', '=', 'nome-2', ['de'])->count());
+
+        //Translation, correct locale-array
+        $this->assertEquals(1, CustomTranslatableModel::whereTranslation('slug', '=', 'nome-2', ['de', 'pt'])->count());
+
+        //Translation, wrong locale
+        $this->assertEquals(0, CustomTranslatableModel::whereTranslation('slug', '=', 'nome-2', 'de')->count());
+
+        //Translation, correct locale
+        $this->assertEquals(1, CustomTranslatableModel::whereTranslation('slug', '=', 'nome-2', 'pt')->count());
     }
 }
 
-class NotTranslatableModel extends Model
+class StillNotTranslatableModel extends NotTranslatableModel
 {
-    protected $table = 'articles';
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'name', 'decription',
-    ];
+    protected $translatable = ['name'];
 }
 
-class StillNotTranslatableModel extends Model
+class ActuallyTranslatableModel extends NotTranslatableModel
 {
-    protected $table = 'articles';
+    use Translatable;
+}
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'name', 'decription',
-    ];
+class TranslatableModel extends  NotTranslatableModel
+{
+    use Translatable;
 
     protected $translatable = ['name'];
 }
 
-class ActuallyTranslatableModel extends Model
+class CustomTranslatableModel extends  NotTranslatableModel
 {
-    protected $table = 'articles';
-
     use Translatable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'name', 'description', 'slug',
-    ];
+    protected $translatable = ['name'];
+
+    protected $translations_model = TarjamaModel::class;
 }
