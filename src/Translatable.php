@@ -24,17 +24,17 @@ trait Translatable
     /**
      * Translate the whole model.
      * 
-     * @param string|null $language 
+     * @param string|null $locale 
      * @param string|bool $fallback 
      * @return Translator 
      */
-    public function translate($language = null, $fallback = true)
+    public function translate($locale = null, $fallback = true)
     {
         if (!$this->relationLoaded('translations')) {
             $this->load('translations');
         }
 
-        return (new Translator($this))->translate($language, $fallback);
+        return (new Translator($this))->translate($locale, $fallback);
     }
 
     /**
@@ -165,19 +165,19 @@ trait Translatable
      * Get attribute translations of many launguages.
      * 
      * @param mixed $attribute 
-     * @param array|null $languages 
+     * @param array|null $locales 
      * @param bool $fallback 
      * @return array 
      */
-    public function getTranslationsOf($attribute, array $languages = null, $fallback = true)
+    public function getTranslationsOf($attribute, array $locales = null, $fallback = true)
     {
-        if (is_null($languages)) {
-            $languages = [config('app.locale')];
+        if (is_null($locales)) {
+            $locales = [config('app.locale')];
         }
 
         $response = [];
-        foreach ($languages as $language) {
-            $response[$language] = $this->getTranslatedAttribute($attribute, $language, $fallback);
+        foreach ($locales as $locale) {
+            $response[$locale] = $this->getTranslatedAttribute($attribute, $locale, $fallback);
         }
 
         return $response;
@@ -187,19 +187,19 @@ trait Translatable
      * Get a single translated attribute.
      *
      * @param $attribute
-     * @param null $language
+     * @param null $locale
      * @param bool $fallback
      *
      * @return null
      */
-    public function getTranslatedAttribute($attribute, $language = null, $fallback = true)
+    public function getTranslatedAttribute($attribute, $locale = null, $fallback = true)
     {
         // If multilingual is not enabled don't check for translations
         if (!config('tarjama.enabled')) {
             return $this->getAttributeValue($attribute);
         }
 
-        list($value) = $this->getTranslatedAttributeMeta($attribute, $language, $fallback);
+        list($value) = $this->getTranslatedAttributeMeta($attribute, $locale, $fallback);
 
         return $value;
     }
