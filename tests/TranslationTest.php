@@ -4,11 +4,11 @@ namespace LaravelArab\Tarjama\Tests;
 
 use Illuminate\Support\Facades\DB;
 use LaravelArab\Tarjama\Collection;
-use LaravelArab\Tarjama\Translator;
-use LaravelArab\Tarjama\Translatable;
 use LaravelArab\Tarjama\Facades\Tarjama;
-use LaravelArab\Tarjama\Tests\Models\TarjamaModel;
 use LaravelArab\Tarjama\Tests\Models\NotTranslatableModel;
+use LaravelArab\Tarjama\Tests\Models\TarjamaModel;
+use LaravelArab\Tarjama\Translatable;
+use LaravelArab\Tarjama\Translator;
 
 class TranslationTest extends TestCase
 {

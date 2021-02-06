@@ -2,7 +2,6 @@
 
 namespace LaravelArab\Tarjama\Tests\Models;
 
-use LaravelArab\Tarjama\Translatable;
 use Illuminate\Database\Eloquent\Model;
 
 class NotTranslatableModel extends Model

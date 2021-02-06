@@ -2,11 +2,11 @@
 
 namespace LaravelArab\Tarjama;
 
-use LaravelArab\Tarjama\Translator;
 use Illuminate\Database\Eloquent\Builder;
-use LaravelArab\Tarjama\Models\Translation;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use LaravelArab\Tarjama\Models\Translation;
+use LaravelArab\Tarjama\Translator;
 
 trait Translatable
 {

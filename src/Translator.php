@@ -2,10 +2,10 @@
 
 namespace LaravelArab\Tarjama;
 
-use Exception;
 use ArrayAccess;
-use JsonSerializable;
+use Exception;
 use Illuminate\Database\Eloquent\Model;
+use JsonSerializable;
 use LaravelArab\Tarjama\Models\Translation;
 
 class Translator implements ArrayAccess, JsonSerializable
