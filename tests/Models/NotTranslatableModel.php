@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelArab\Tarjama\Tests\Models;
+namespace Fevrok\Translatable\Tests\Models;
 
 use Illuminate\Database\Eloquent\Model;
 

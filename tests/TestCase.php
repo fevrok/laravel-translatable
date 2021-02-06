@@ -1,18 +1,18 @@
 <?php
 
-namespace LaravelArab\Tarjama\Tests;
+namespace Fevrok\Translatable\Tests;
 
-use CreateTarjamasTable;
+use CreateTestsTranslationsTable;
 use CreateTranslationsTable;
+use Fevrok\Translatable\Collection as TranslatorCollection;
+use Fevrok\Translatable\Facades\Translatable as TranslatableFacade;
+use Fevrok\Translatable\Translatable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
-use LaravelArab\Tarjama\Collection as TranslatorCollection;
-use LaravelArab\Tarjama\Facades\Tarjama as TarjamaFacade;
-use LaravelArab\Tarjama\Tarjama;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 class TestCase extends OrchestraTestCase
@@ -25,10 +25,10 @@ class TestCase extends OrchestraTestCase
 
         // TODO: figure out a way to load this from the service provider
         $loader = AliasLoader::getInstance();
-        $loader->alias('Tarjama', TarjamaFacade::class);
+        $loader->alias('Translatable', TranslatableFacade::class);
 
-        $this->app->singleton('tarjama', function () {
-            return new Tarjama();
+        $this->app->singleton('translatable', function () {
+            return new Translatable();
         });
 
         Collection::macro('translate', function () {
@@ -53,10 +53,10 @@ class TestCase extends OrchestraTestCase
     protected function createTranslationsTable()
     {
         include_once __DIR__ . '/../publishable/database/migrations/create_translations_table.php.stub';
-        include_once __DIR__ . '/stubs/create_tarjamas_table.php.stub';
+        include_once __DIR__ . '/stubs/create_tests_translations_table.php.stub';
 
         (new CreateTranslationsTable())->up();
-        (new CreateTarjamasTable())->up();
+        (new CreateTestsTranslationsTable())->up();
     }
 
     protected function createTables(...$tableNames)

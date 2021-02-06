@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTarjamasTable extends Migration
+class CreateTestsTranslationsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateTarjamasTable extends Migration
      */
     public function up()
     {
-        Schema::create('tarjamas', function (Blueprint $table) {
+        Schema::create('tests_translations', function (Blueprint $table) {
             $table->increments('id');
             $table->string('table_name');
             $table->string('column_name');
@@ -34,6 +34,6 @@ class CreateTarjamasTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tarjamas');
+        Schema::dropIfExists('tests_translations');
     }
 }

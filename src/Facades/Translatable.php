@@ -1,10 +1,10 @@
 <?php
 
-namespace LaravelArab\Tarjama\Facades;
+namespace Fevrok\Translatable\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
-class Tarjama extends Facade
+class Translatable extends Facade
 {
     /**
      * Get the registered name of the component.
@@ -13,6 +13,6 @@ class Tarjama extends Facade
      */
     protected static function getFacadeAccessor()
     {
-        return 'tarjama';
+        return 'translatable';
     }
 }

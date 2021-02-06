@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelArab\Tarjama;
+namespace Fevrok\Translatable;
 
 use Illuminate\Support\Collection as IlluminateCollection;
 

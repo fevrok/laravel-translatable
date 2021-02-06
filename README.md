@@ -1,17 +1,17 @@
-# tarjama
+# translatable
 
 It's a Laravel model columns translation manager
 
 ## Current working model
 
-![Laravel Tarjama current working model](/images/current_working_model.png)
+![Laravel Translatable current working model](/images/current_working_model.png)
 
 ## Installation
 
 You can install the package via composer:
 
 ```bash
-composer require laravelarab/tarjama
+composer require fevrok/laravel-translatable
 ```
 
 If you have Laravel 5.5 and up The package will automatically register itself.
@@ -19,13 +19,13 @@ If you have Laravel 5.5 and up The package will automatically register itself.
 else you have to add the service provider to app/config/app.php
 
 ```php
-LaravelArab\Tarjama\TarjamaServiceProvider::class,
+Fevrok\Translatable\TranslatableServiceProvider::class,
 ```
 
 publish config file and migration.
 
 ```bash
-php artisan vendor:publish --provider="LaravelArab\Tarjama\TarjamaServiceProvider"
+php artisan vendor:publish --provider="Fevrok\Translatable\TranslatableServiceProvider"
 ```
 
 This is the contents of the published file:
@@ -52,13 +52,13 @@ php artisan migrate
 
 The required steps to make a model translatable are:
 
-- Just use the `LaravelArab\Tarjama\Translatable` trait.
+- Just use the `Fevrok\Translatable\Translatable` trait.
 
 Here's an example of a prepared model:
 
 ```php
 use Illuminate\Database\Eloquent\Model;
-use LaravelArab\Tarjama\Translatable;
+use Fevrok\Translatable\Translatable;
 
 class Item extends Model
 {
@@ -82,7 +82,7 @@ To get started, publish the assets again this will create new migration update t
 
 CustomTranslation.php
 ```php
-class CustomTranslation extends \LaravelArab\Tarjama\Models\Translation
+class CustomTranslation extends \Fevrok\Translatable\Models\Translation
 {
     protected $table = 'custom_translations';
 }
@@ -92,7 +92,7 @@ Add `$translations_model` property and  give it your custom translations class.
 
 ```php
 use Illuminate\Database\Eloquent\Model;
-use LaravelArab\Tarjama\Translatable;
+use Fevrok\Translatable\Translatable;
 
 class Item extends Model
 {
