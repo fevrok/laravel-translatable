@@ -29,7 +29,10 @@ class Translation extends Model
     /**
      * You can create this methods and override functionality.
      * 
+     * @method public function scopeWhereTableName($query, $value)
+     * 
      * @method public function scopeWhereColumnName($query, $value)
+     * @method public function scopeWhereInColumnName($query, $value)
      * 
      * @method public function scopeWhereLocale($query, $value)
      * @method public function scopeOrWhereLocale($query, $value)

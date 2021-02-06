@@ -18,7 +18,7 @@ trait Translatable
     public function translations(): HasMany
     {
         return $this->hasMany($this->translationsModel(), 'foreign_key', $this->getKeyName())
-            ->where('table_name', $this->getTable());
+            ->whereTableName($this->getTable());
     }
 
     /**
@@ -147,7 +147,7 @@ trait Translatable
 
         return $query->whereIn(
             $this->getKeyName(),
-            $this->translationsModel()::where('table_name', $this->getTable())
+            $this->translationsModel()::whereTableName($this->getTable())
                 ->whereColumnName($field)
                 ->where('value', $operator, $value)
                 ->when(!is_null($locales), function ($query) use ($locales) {
@@ -384,7 +384,7 @@ trait Translatable
     public function deleteAttributeTranslations(array $attributes, $locales = null)
     {
         $this->translations()
-            ->whereIn('column_name', $attributes)
+            ->whereInColumnName($attributes)
             ->when(!is_null($locales), function ($query) use ($locales) {
                 $method = is_array($locales) ? 'whereIn' : 'where';
 

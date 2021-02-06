@@ -90,7 +90,7 @@ class Translator implements ArrayAccess, JsonSerializable
             if ($attribute['exists']) {
                 $translation = $this->getTranslationModel($key);
             } else {
-                $translation = $this->translationsModel()::where('table_name', $this->model->getTable())
+                $translation = $this->translationsModel()::whereTableName($this->model->getTable())
                     ->whereColumnName($key)
                     ->where('foreign_key', $this->model->getKey())
                     ->whereLocale($this->locale)
@@ -378,7 +378,7 @@ class Translator implements ArrayAccess, JsonSerializable
         $translations = $this->model->getRelation('translations');
         $locale = $this->locale;
 
-        $this->translationsModel()::where('table_name', $this->model->getTable())
+        $this->translationsModel()::whereTableName($this->model->getTable())
             ->whereColumnName($key)
             ->where('foreign_key', $this->model->getKey())
             ->whereLocale($locale)
