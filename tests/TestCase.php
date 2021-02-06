@@ -3,17 +3,17 @@
 namespace LaravelArab\Tarjama\Tests;
 
 use CreateTarjamasTable;
-use Illuminate\Support\Str;
 use CreateTranslationsTable;
-use LaravelArab\Tarjama\Tarjama;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Eloquent\Collection;
-use Orchestra\Testbench\TestCase as OrchestraTestCase;
-use LaravelArab\Tarjama\Facades\Tarjama as TarjamaFacade;
+use Illuminate\Support\Str;
 use LaravelArab\Tarjama\Collection as TranslatorCollection;
+use LaravelArab\Tarjama\Facades\Tarjama as TarjamaFacade;
+use LaravelArab\Tarjama\Tarjama;
+use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 class TestCase extends OrchestraTestCase
 {

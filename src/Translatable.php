@@ -2,11 +2,11 @@
 
 namespace LaravelArab\Tarjama;
 
-use LaravelArab\Tarjama\Translator;
 use Illuminate\Database\Eloquent\Builder;
-use LaravelArab\Tarjama\Models\Translation;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use LaravelArab\Tarjama\Models\Translation;
+use LaravelArab\Tarjama\Translator;
 
 trait Translatable
 {
@@ -18,7 +18,7 @@ trait Translatable
     public function translations(): HasMany
     {
         return $this->hasMany($this->translationsModel(), 'foreign_key', $this->getKeyName())
-            ->where('table_name', $this->getTable());
+            ->whereTableName($this->getTable());
     }
 
     /**
@@ -72,10 +72,10 @@ trait Translatable
 
         $query->with([$this->translationsModel() => function (Relation $query) use ($locale, $fallback) {
             $query->where(function ($q) use ($locale, $fallback) {
-                $q->where('locale', $locale);
+                $q->whereLocale($locale);
 
                 if ($fallback !== false) {
-                    $q->orWhere('locale', $fallback);
+                    $q->orWhereLocale($fallback);
                 }
             });
         }]);
@@ -107,13 +107,13 @@ trait Translatable
 
             $query->where(function ($q) use ($locales, $fallback) {
                 if (is_array($locales)) {
-                    $q->whereIn('locale', $locales);
+                    $q->whereInLocale($locales);
                 } else {
-                    $q->where('locale', $locales);
+                    $q->whereLocale($locales);
                 }
 
                 if ($fallback !== false) {
-                    $q->orWhere('locale', $fallback);
+                    $q->orWhereLocale($fallback);
                 }
             });
         }]);
@@ -140,18 +140,13 @@ trait Translatable
             $locales = [$locales];
         }
 
-        if (!isset($value)) {
-            $value = $operator;
-            $operator = '=';
-        }
-
         return $query->whereIn(
             $this->getKeyName(),
-            $this->translationsModel()::where('table_name', $this->getTable())
-                ->where('column_name', $field)
-                ->where('value', $operator, $value)
+            $this->translationsModel()::whereTableName($this->getTable())
+                ->whereColumnName($field)
+                ->whereValue($operator, $value)
                 ->when(!is_null($locales), function ($query) use ($locales) {
-                    return $query->whereIn('locale', $locales);
+                    return $query->whereInLocale($locales);
                 })
                 ->pluck('foreign_key')
         )->when($default, function ($query) use ($field, $operator, $value) {
@@ -236,10 +231,10 @@ trait Translatable
             $this->load('translations');
         }
 
-        $translations = $this->getRelation('translations')
-            ->where('column_name', $attribute);
+        $translations = $this->translations()
+            ->whereColumnName($attribute);
 
-        $localeTranslation = $translations->where('locale', $locale)->first();
+        $localeTranslation = $translations->whereLocale($locale)->first();
 
         if ($localeTranslation) {
             return [$localeTranslation->value, $locale, true];
@@ -253,7 +248,7 @@ trait Translatable
             return [$this->getAttribute($attribute), $locale, false];
         }
 
-        $fallbackTranslation = $translations->where('locale', $fallback)->first();
+        $fallbackTranslation = $translations->whereLocale($fallback)->first();
 
         if ($fallbackTranslation && $fallback !== false) {
             return [$fallbackTranslation->value, $locale, true];
@@ -384,11 +379,13 @@ trait Translatable
     public function deleteAttributeTranslations(array $attributes, $locales = null)
     {
         $this->translations()
-            ->whereIn('column_name', $attributes)
+            ->whereInColumnName($attributes)
             ->when(!is_null($locales), function ($query) use ($locales) {
-                $method = is_array($locales) ? 'whereIn' : 'where';
+                if (is_array($locales)) {
+                    return $query->whereInLocale($locales);
+                }
 
-                return $query->$method('locale', $locales);
+                return $query->whereLocale($locales);
             })
             ->delete();
     }
@@ -403,11 +400,13 @@ trait Translatable
     public function deleteAttributeTranslation($attribute, $locales = null)
     {
         $this->translations()
-            ->where('column_name', $attribute)
+            ->whereColumnName($attribute)
             ->when(!is_null($locales), function ($query) use ($locales) {
-                $method = is_array($locales) ? 'whereIn' : 'where';
+                if (is_array($locales)) {
+                    return $query->whereInLocale($locales);
+                }
 
-                return $query->$method('locale', $locales);
+                return $query->whereLocale($locales);
             })
             ->delete();
     }

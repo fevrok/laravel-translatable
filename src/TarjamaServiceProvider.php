@@ -2,11 +2,11 @@
 
 namespace LaravelArab\Tarjama;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Database\Eloquent\Collection;
-use LaravelArab\Tarjama\Facades\Tarjama as TarjamaFacade;
 use LaravelArab\Tarjama\Collection as TranslatorCollection;
+use LaravelArab\Tarjama\Facades\Tarjama as TarjamaFacade;
 
 class TarjamaServiceProvider extends ServiceProvider
 {

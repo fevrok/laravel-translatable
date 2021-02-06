@@ -2,10 +2,10 @@
 
 namespace LaravelArab\Tarjama;
 
-use Exception;
 use ArrayAccess;
-use JsonSerializable;
+use Exception;
 use Illuminate\Database\Eloquent\Model;
+use JsonSerializable;
 use LaravelArab\Tarjama\Models\Translation;
 
 class Translator implements ArrayAccess, JsonSerializable
@@ -90,10 +90,10 @@ class Translator implements ArrayAccess, JsonSerializable
             if ($attribute['exists']) {
                 $translation = $this->getTranslationModel($key);
             } else {
-                $translation = $this->translationsModel()::where('table_name', $this->model->getTable())
-                    ->where('column_name', $key)
-                    ->where('foreign_key', $this->model->getKey())
-                    ->where('locale', $this->locale)
+                $translation = $this->translationsModel()::whereTableName($this->model->getTable())
+                    ->whereColumnName($key)
+                    ->whereForeignKey($this->model->getKey())
+                    ->whereLocale($this->locale)
                     ->first();
             }
 
@@ -167,9 +167,9 @@ class Translator implements ArrayAccess, JsonSerializable
      */
     public function getTranslationModel($key, $locale = null)
     {
-        return $this->model->getRelation('translations')
-            ->where('column_name', $key)
-            ->where('locale', $locale ? $locale : $this->locale)
+        return $this->model->translations()
+            ->whereColumnName($key)
+            ->whereLocale($locale ? $locale : $this->locale)
             ->first();
     }
 
@@ -340,9 +340,9 @@ class Translator implements ArrayAccess, JsonSerializable
         $this->attributes[$key]['exists'] = true;
         $this->attributes[$key]['value'] = $value;
 
-        return $this->model->getRelation('translations')
+        return $this->model->translations()
             ->where('key', $key)
-            ->where('locale', $this->locale)
+            ->whereLocale($this->locale)
             ->first();
     }
 
@@ -378,10 +378,10 @@ class Translator implements ArrayAccess, JsonSerializable
         $translations = $this->model->getRelation('translations');
         $locale = $this->locale;
 
-        $this->translationsModel()::where('table_name', $this->model->getTable())
-            ->where('column_name', $key)
-            ->where('foreign_key', $this->model->getKey())
-            ->where('locale', $locale)
+        $this->translationsModel()::whereTableName($this->model->getTable())
+            ->whereColumnName($key)
+            ->whereForeignKey($this->model->getKey())
+            ->whereLocale($locale)
             ->delete();
 
         $this->model->setRelation('translations', $translations->filter(function ($translation) use ($key, $locale) {
