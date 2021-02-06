@@ -31,5 +31,9 @@ class Translation extends Model
      * 
      * @method public function scopeWhereColumnName($query, $value)
      * 
+     * @method public function scopeWhereLocale($query, $value)
+     * @method public function scopeOrWhereLocale($query, $value)
+     * @method public function scopeWhereInLocale($query, $value)
+     * 
      */
 }

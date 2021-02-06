@@ -93,7 +93,7 @@ class Translator implements ArrayAccess, JsonSerializable
                 $translation = $this->translationsModel()::where('table_name', $this->model->getTable())
                     ->whereColumnName($key)
                     ->where('foreign_key', $this->model->getKey())
-                    ->where('locale', $this->locale)
+                    ->whereLocale($this->locale)
                     ->first();
             }
 
@@ -169,7 +169,7 @@ class Translator implements ArrayAccess, JsonSerializable
     {
         return $this->model->translations()
             ->whereColumnName($key)
-            ->where('locale', $locale ? $locale : $this->locale)
+            ->whereLocale($locale ? $locale : $this->locale)
             ->first();
     }
 
@@ -340,9 +340,9 @@ class Translator implements ArrayAccess, JsonSerializable
         $this->attributes[$key]['exists'] = true;
         $this->attributes[$key]['value'] = $value;
 
-        return $this->model->getRelation('translations')
+        return $this->model->translations()
             ->where('key', $key)
-            ->where('locale', $this->locale)
+            ->whereLocale($this->locale)
             ->first();
     }
 
@@ -381,7 +381,7 @@ class Translator implements ArrayAccess, JsonSerializable
         $this->translationsModel()::where('table_name', $this->model->getTable())
             ->whereColumnName($key)
             ->where('foreign_key', $this->model->getKey())
-            ->where('locale', $locale)
+            ->whereLocale($locale)
             ->delete();
 
         $this->model->setRelation('translations', $translations->filter(function ($translation) use ($key, $locale) {

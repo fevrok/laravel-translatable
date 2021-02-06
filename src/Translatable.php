@@ -72,10 +72,10 @@ trait Translatable
 
         $query->with([$this->translationsModel() => function (Relation $query) use ($locale, $fallback) {
             $query->where(function ($q) use ($locale, $fallback) {
-                $q->where('locale', $locale);
+                $q->whereLocale($locale);
 
                 if ($fallback !== false) {
-                    $q->orWhere('locale', $fallback);
+                    $q->orWhereLocale($fallback);
                 }
             });
         }]);
@@ -107,13 +107,13 @@ trait Translatable
 
             $query->where(function ($q) use ($locales, $fallback) {
                 if (is_array($locales)) {
-                    $q->whereIn('locale', $locales);
+                    $q->whereInLocale($locales);
                 } else {
-                    $q->where('locale', $locales);
+                    $q->whereLocale($locales);
                 }
 
                 if ($fallback !== false) {
-                    $q->orWhere('locale', $fallback);
+                    $q->orWhereLocale($fallback);
                 }
             });
         }]);
@@ -239,7 +239,7 @@ trait Translatable
         $translations = $this->translations()
             ->whereColumnName($attribute);
 
-        $localeTranslation = $translations->where('locale', $locale)->first();
+        $localeTranslation = $translations->whereLocale($locale)->first();
 
         if ($localeTranslation) {
             return [$localeTranslation->value, $locale, true];
@@ -253,7 +253,7 @@ trait Translatable
             return [$this->getAttribute($attribute), $locale, false];
         }
 
-        $fallbackTranslation = $translations->where('locale', $fallback)->first();
+        $fallbackTranslation = $translations->whereLocale($fallback)->first();
 
         if ($fallbackTranslation && $fallback !== false) {
             return [$fallbackTranslation->value, $locale, true];
