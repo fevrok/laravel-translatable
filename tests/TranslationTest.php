@@ -276,6 +276,27 @@ class TranslationTest extends TestCase
         $this->assertEquals(1, ActuallyTranslatableModel::whereTranslation('slug', '=', 'nome-2', 'pt')->count());
     }
 
+    public function testSwitchingCurrentLocale()
+    {
+        DB::table('translations')->insert([
+            'table_name'  => 'articles',
+            'column_name' => 'name',
+            'foreign_key' => 1,
+            'locale'      => 'pt',
+            'value'       => 'nome 1',
+        ]);
+
+        $model = TranslatableModel::find(1);
+
+        app()->setLocale('pt');
+
+        $this->assertEquals('nome 1', $model->getTranslatedAttribute('name'));
+
+        app()->setLocale('en');
+
+        $this->assertEquals('name 1', $model->getTranslatedAttribute('name'));
+    }
+
     public function testUsingCustomTranslationsTable()
     {
         TarjamaModel::create([
