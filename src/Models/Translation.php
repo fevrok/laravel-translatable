@@ -38,5 +38,37 @@ class Translation extends Model
      * @method public function scopeOrWhereLocale($query, $value)
      * @method public function scopeWhereInLocale($query, $value)
      * 
+     * @method public function scopeWhereValue($query, $value)
+     * 
      */
+
+    /**
+     * Add operator to value field scope.
+     * 
+     * @param Builder $query 
+     * @param string $operator 
+     * @param mixed|null $value 
+     * @return Builder 
+     */
+    public function scopeWhereValue($query, $operator, $value = null)
+    {
+        if (is_null($value)) {
+            $value = $operator;
+            $operator = '=';
+        }
+
+        return $query->where('value', $operator, $value);
+    }
+
+    /**
+     * Looks like whereInLocale not working as expected so added this.
+     * 
+     * @param Builder $query 
+     * @param mixed $value 
+     * @return Builder 
+     */
+    public function scopeWhereInLocale($query, $value)
+    {
+        return $query->whereIn('locale', $value);
+    }
 }

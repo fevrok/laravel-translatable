@@ -140,18 +140,13 @@ trait Translatable
             $locales = [$locales];
         }
 
-        if (!isset($value)) {
-            $value = $operator;
-            $operator = '=';
-        }
-
         return $query->whereIn(
             $this->getKeyName(),
             $this->translationsModel()::whereTableName($this->getTable())
                 ->whereColumnName($field)
-                ->where('value', $operator, $value)
+                ->whereValue($operator, $value)
                 ->when(!is_null($locales), function ($query) use ($locales) {
-                    return $query->whereIn('locale', $locales);
+                    return $query->whereInLocale($locales);
                 })
                 ->pluck('foreign_key')
         )->when($default, function ($query) use ($field, $operator, $value) {
