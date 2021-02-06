@@ -386,9 +386,11 @@ trait Translatable
         $this->translations()
             ->whereInColumnName($attributes)
             ->when(!is_null($locales), function ($query) use ($locales) {
-                $method = is_array($locales) ? 'whereIn' : 'where';
+                if (is_array($locales)) {
+                    return $query->whereInLocale($locales);
+                }
 
-                return $query->$method('locale', $locales);
+                return $query->whereLocale($locales);
             })
             ->delete();
     }
@@ -405,9 +407,11 @@ trait Translatable
         $this->translations()
             ->whereColumnName($attribute)
             ->when(!is_null($locales), function ($query) use ($locales) {
-                $method = is_array($locales) ? 'whereIn' : 'where';
+                if (is_array($locales)) {
+                    return $query->whereInLocale($locales);
+                }
 
-                return $query->$method('locale', $locales);
+                return $query->whereLocale($locales);
             })
             ->delete();
     }
