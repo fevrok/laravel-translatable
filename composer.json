@@ -1,6 +1,6 @@
 {
-  "name": "laravelarab/tarjama",
-  "description": "It's a laravel model columns translation manager",
+  "name": "fevrok/laravel-translatable",
+  "description": "This package allows you to translate your models fields.",
   "license": "MIT",
   "keywords": [
     "laravel",
@@ -10,10 +10,10 @@
     "model",
     "i8n",
     "translation",
-    "tarjama",
+    "translatable",
     "multilingual"
   ],
-  "homepage": "https://github.com/LaravelArab/tarjama",
+  "homepage": "https://github.com/fevrok/laravel-translatable",
   "authors": [
     {
       "name": "Abdellah Chadidi",
@@ -34,18 +34,18 @@
   },
   "autoload": {
     "psr-4": {
-      "LaravelArab\\Tarjama\\": "src"
+      "Fevrok\\Translatable\\": "src"
     }
   },
   "autoload-dev": {
     "psr-4": {
-        "LaravelArab\\Tarjama\\Tests\\": "tests"
+      "Fevrok\\Translatable\\Tests\\": "tests"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "LaravelArab\\Tarjama\\TarjamaServiceProvider"
+        "Fevrok\\Translatable\\TranslatableServiceProvider"
       ]
     }
   },

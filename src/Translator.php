@@ -1,12 +1,12 @@
 <?php
 
-namespace LaravelArab\Tarjama;
+namespace Fevrok\Translatable;
 
 use ArrayAccess;
 use Exception;
+use Fevrok\Translatable\Models\Translation;
 use Illuminate\Database\Eloquent\Model;
 use JsonSerializable;
-use LaravelArab\Tarjama\Models\Translation;
 
 class Translator implements ArrayAccess, JsonSerializable
 {
@@ -419,7 +419,7 @@ class Translator implements ArrayAccess, JsonSerializable
     public function __call($method, array $arguments)
     {
         if (!$this->model->hasTranslatorMethod($method)) {
-            throw new Exception('Call to undefined method LaravelArab\Tarjama\Translator::' . $method . '()');
+            throw new Exception('Call to undefined method Fevrok\Translatable\Translator::' . $method . '()');
         }
 
         return call_user_func_array([$this, 'runTranslatorMethod'], [$method, $arguments]);

@@ -1,14 +1,14 @@
 <?php
 
-namespace LaravelArab\Tarjama\Tests;
+namespace Fevrok\Translatable\Tests;
 
+use Fevrok\Translatable\Collection;
+use Fevrok\Translatable\Facades\Translatable;
+use Fevrok\Translatable\HasTranslations;
+use Fevrok\Translatable\Tests\Models\NotTranslatableModel;
+use Fevrok\Translatable\Tests\Models\TestsTranslationsModel;
+use Fevrok\Translatable\Translator;
 use Illuminate\Support\Facades\DB;
-use LaravelArab\Tarjama\Collection;
-use LaravelArab\Tarjama\Facades\Tarjama;
-use LaravelArab\Tarjama\Tests\Models\NotTranslatableModel;
-use LaravelArab\Tarjama\Tests\Models\TarjamaModel;
-use LaravelArab\Tarjama\Translatable;
-use LaravelArab\Tarjama\Translator;
 
 class TranslationTest extends TestCase
 {
@@ -17,18 +17,18 @@ class TranslationTest extends TestCase
         parent::setUp();
 
         // Turn on multilingual
-        config()->set('tarjama.enabled', true);
+        config()->set('translatable.enabled', true);
     }
 
     public function testCheckingModelIsTranslatable()
     {
-        $this->assertTrue(Tarjama::translatable(TranslatableModel::class));
+        $this->assertTrue(Translatable::translatable(TranslatableModel::class));
     }
 
     public function testCheckingModelIsNotTranslatable()
     {
-        $this->assertFalse(Tarjama::translatable(NotTranslatableModel::class));
-        $this->assertFalse(Tarjama::translatable(StillNotTranslatableModel::class));
+        $this->assertFalse(Translatable::translatable(NotTranslatableModel::class));
+        $this->assertFalse(Translatable::translatable(StillNotTranslatableModel::class));
     }
 
     public function testGettingModelTranslatableAttributes()
@@ -299,7 +299,7 @@ class TranslationTest extends TestCase
 
     public function testUsingCustomTranslationsTable()
     {
-        TarjamaModel::create([
+        TestsTranslationsModel::create([
             'table_name'  => 'articles',
             'column_name' => 'slug',
             'foreign_key' => 1,
@@ -307,7 +307,7 @@ class TranslationTest extends TestCase
             'value'       => 'nome-1',
         ]);
 
-        TarjamaModel::create([
+        TestsTranslationsModel::create([
             'table_name'  => 'articles',
             'column_name' => 'slug',
             'foreign_key' => 2,
@@ -345,21 +345,21 @@ class StillNotTranslatableModel extends NotTranslatableModel
 
 class ActuallyTranslatableModel extends NotTranslatableModel
 {
-    use Translatable;
+    use HasTranslations;
 }
 
 class TranslatableModel extends  NotTranslatableModel
 {
-    use Translatable;
+    use HasTranslations;
 
     protected $translatable = ['name'];
 }
 
 class CustomTranslatableModel extends  NotTranslatableModel
 {
-    use Translatable;
+    use HasTranslations;
 
     protected $translatable = ['name'];
 
-    protected $translations_model = TarjamaModel::class;
+    protected $translations_model = TestsTranslationsModel::class;
 }
