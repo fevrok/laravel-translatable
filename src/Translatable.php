@@ -148,7 +148,7 @@ trait Translatable
         return $query->whereIn(
             $this->getKeyName(),
             $this->translationsModel()::where('table_name', $this->getTable())
-                ->where('column_name', $field)
+                ->whereColumnName($field)
                 ->where('value', $operator, $value)
                 ->when(!is_null($locales), function ($query) use ($locales) {
                     return $query->whereIn('locale', $locales);
@@ -236,8 +236,8 @@ trait Translatable
             $this->load('translations');
         }
 
-        $translations = $this->getRelation('translations')
-            ->where('column_name', $attribute);
+        $translations = $this->translations()
+            ->whereColumnName($attribute);
 
         $localeTranslation = $translations->where('locale', $locale)->first();
 
@@ -403,7 +403,7 @@ trait Translatable
     public function deleteAttributeTranslation($attribute, $locales = null)
     {
         $this->translations()
-            ->where('column_name', $attribute)
+            ->whereColumnName($attribute)
             ->when(!is_null($locales), function ($query) use ($locales) {
                 $method = is_array($locales) ? 'whereIn' : 'where';
 
