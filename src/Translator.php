@@ -92,7 +92,7 @@ class Translator implements ArrayAccess, JsonSerializable
             } else {
                 $translation = $this->translationsModel()::whereTableName($this->model->getTable())
                     ->whereColumnName($key)
-                    ->where('foreign_key', $this->model->getKey())
+                    ->whereForeignKey($this->model->getKey())
                     ->whereLocale($this->locale)
                     ->first();
             }
@@ -380,7 +380,7 @@ class Translator implements ArrayAccess, JsonSerializable
 
         $this->translationsModel()::whereTableName($this->model->getTable())
             ->whereColumnName($key)
-            ->where('foreign_key', $this->model->getKey())
+            ->whereForeignKey($this->model->getKey())
             ->whereLocale($locale)
             ->delete();
 

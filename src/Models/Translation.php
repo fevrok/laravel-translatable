@@ -3,6 +3,7 @@
 namespace LaravelArab\Tarjama\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 class Translation extends Model
 {
@@ -33,6 +34,8 @@ class Translation extends Model
      * 
      * @method public function scopeWhereColumnName($query, $value)
      * @method public function scopeWhereInColumnName($query, $value)
+     * 
+     * @method public function scopeWhereForeignKey($query, $value)
      * 
      * @method public function scopeWhereLocale($query, $value)
      * @method public function scopeOrWhereLocale($query, $value)
