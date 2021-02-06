@@ -4,42 +4,25 @@ namespace Fevrok\Translatable\Tests;
 
 use CreateTestsTranslationsTable;
 use CreateTranslationsTable;
-use Fevrok\Translatable\Collection as TranslatorCollection;
-use Fevrok\Translatable\Facades\Translatable as TranslatableFacade;
-use Fevrok\Translatable\Translatable;
-use Illuminate\Database\Eloquent\Collection;
+use Fevrok\Translatable\TranslatableServiceProvider;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Encryption\Encrypter;
-use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
-class TestCase extends OrchestraTestCase
+abstract class TestCase extends OrchestraTestCase
 {
     public function setUp(): void
     {
         parent::setUp();
 
         $this->setUpDatabase();
+    }
 
-        // TODO: figure out a way to load this from the service provider
-        $loader = AliasLoader::getInstance();
-        $loader->alias('Translatable', TranslatableFacade::class);
-
-        $this->app->singleton('translatable', function () {
-            return new Translatable();
-        });
-
-        Collection::macro('translate', function () {
-            $transtors = [];
-
-            foreach ($this->all() as $item) {
-                $transtors[] = call_user_func_array([$item, 'translate'], func_get_args());
-            }
-
-            return new TranslatorCollection($transtors);
-        });
+    protected function getPackageProviders($app)
+    {
+        return [TranslatableServiceProvider::class];
     }
 
     protected function setUpDatabase()
