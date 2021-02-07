@@ -1,8 +1,8 @@
-# translatable
+# Laravel Translatable
 
 It's a Laravel model columns translation manager
 
-## Current working model
+## How it works?
 
 ![Laravel Translatable current working model](/images/current_working_model.png)
 
@@ -28,7 +28,15 @@ publish config file and migration.
 php artisan vendor:publish --provider="Fevrok\Translatable\TranslatableServiceProvider"
 ```
 
-This is the contents of the published file:
+next migrate translations table
+
+```bash
+php artisan migrate
+```
+
+## Setup
+
+After finishing the installation you can open `config/translatable.php`:
 
 ```php
 return [
@@ -41,24 +49,21 @@ return [
 
 ];
 ```
+Update your config accordingly.
 
-next migrate translations table
-
-```bash
-php artisan migrate
-```
-
-## Making a model translatable
+### Making a model translatable
 
 The required steps to make a model translatable are:
 
-- Just use the `Fevrok\Translatable\Translatable` trait.
+- use the `Fevrok\Translatable\Translatable` trait.
+- define the model translatable fields in `$translatable` property.
 
 Here's an example of a prepared model:
 
 ```php
-use Illuminate\Database\Eloquent\Model;
+
 use Fevrok\Translatable\Translatable;
+use Illuminate\Database\Eloquent\Model;
 
 class Item extends Model
 {
@@ -70,7 +75,8 @@ class Item extends Model
       * @var array
       */
     protected $translatable = [
-        'name', 'color'
+        'name',
+	'description'
     ];
 }
 ```
