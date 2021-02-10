@@ -122,7 +122,21 @@ class Item extends Model
 }
 ```
 
-### Available methods
+## Usage
+
+### Eager-load translations
+
+### Get default language value
+
+### Get translated value
+
+### Translate the whole model
+
+### Check if model is translatable
+
+### Set attribute translations
+
+### Query translatable Models
 
 Saving translations
 
