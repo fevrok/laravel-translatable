@@ -5,6 +5,7 @@ namespace Fevrok\Translatable\Tests;
 use Fevrok\Translatable\Collection;
 use Fevrok\Translatable\Facades\Translatable;
 use Fevrok\Translatable\HasTranslations;
+use Fevrok\Translatable\Models\Translation;
 use Fevrok\Translatable\Tests\Models\NotTranslatableModel;
 use Fevrok\Translatable\Tests\Models\TestsTranslationsModel;
 use Fevrok\Translatable\Translator;
@@ -20,24 +21,47 @@ class TranslationTest extends TestCase
         config()->set('translatable.enabled', true);
     }
 
-    public function testCheckingModelIsTranslatable()
+    /** @test */
+    public function checking_model_is_translatable()
     {
+        $article = TranslatableModel::first();
+        $articles = TranslatableModel::get();
+
+        $traits = class_uses_recursive(get_class($article));
+
+        $this->assertTrue(in_array(HasTranslations::class, $traits));
+        $this->assertTrue(property_exists($article, 'translatable'));
+        $this->assertTrue($article->translatable());
+        $this->assertTrue(Translatable::translatable($article));
+        $this->assertTrue(Translatable::translatable($articles));
         $this->assertTrue(Translatable::translatable(TranslatableModel::class));
     }
 
-    public function testCheckingModelIsNotTranslatable()
+    /** @test */
+    public function checking_model_is_not_translatable()
     {
+        $article = NotTranslatableModel::first();
+        $articles = NotTranslatableModel::get();
+
+        $traits = class_uses_recursive(get_class($article));
+
+        $this->assertFalse(in_array(HasTranslations::class, $traits));
+        $this->assertFalse(property_exists($article, 'translatable'));
+        $this->assertFalse(Translatable::translatable($article));
+        $this->assertFalse(Translatable::translatable($articles));
         $this->assertFalse(Translatable::translatable(NotTranslatableModel::class));
         $this->assertFalse(Translatable::translatable(StillNotTranslatableModel::class));
     }
 
-    public function testGettingModelTranslatableAttributes()
+    /** @test */
+    public function getting_model_translatable_attributes()
     {
         $this->assertEquals(['name'], (new TranslatableModel())->getTranslatableAttributes());
         $this->assertEquals([], (new ActuallyTranslatableModel())->getTranslatableAttributes());
     }
 
-    public function testGettingTranslatorCollection()
+    /** @test */
+    public function getting_translator_collection()
     {
         $collection = TranslatableModel::all()->translate('da');
 
@@ -45,7 +69,8 @@ class TranslationTest extends TestCase
         $this->assertInstanceOf(Translator::class, $collection[0]);
     }
 
-    public function testGettingTranslatorModelOfNonExistingTranslation()
+    /** @test */
+    public function getting_translator_model_of_non_existing_translation()
     {
         $model = TranslatableModel::first()->translate('da');
 
@@ -58,7 +83,8 @@ class TranslationTest extends TestCase
         $this->assertEquals('name 1', $model->getOriginalAttribute('name'));
     }
 
-    public function testGettingTranslatorModelOfExistingTranslation()
+    /** @test */
+    public function getting_translator_model_of_existing_translation()
     {
         DB::table('translations')->insert([
             'table_name'  => 'articles',
@@ -79,7 +105,8 @@ class TranslationTest extends TestCase
         $this->assertEquals('name 1', $model->getOriginalAttribute('name'));
     }
 
-    public function testSavingNonExistingTranslatorModel()
+    /** @test */
+    public function saving_non_existing_translator_model()
     {
         $model = TranslatableModel::first()->translate('da');
 
@@ -118,7 +145,8 @@ class TranslationTest extends TestCase
         $this->assertEquals('name 1', $model->getOriginalAttribute('name'));
     }
 
-    public function testSavingExistingTranslatorModel()
+    /** @test */
+    public function saving_existing_translator_model()
     {
         DB::table('translations')->insert([
             'table_name'  => 'articles',
@@ -165,7 +193,8 @@ class TranslationTest extends TestCase
         $this->assertEquals('name 1', $model->getOriginalAttribute('name'));
     }
 
-    public function testGettingTranslationMetaDataFromTranslator()
+    /** @test */
+    public function getting_translation_meta_data_from_translator()
     {
         $model = TranslatableModel::first()->translate('da');
 
@@ -173,7 +202,8 @@ class TranslationTest extends TestCase
         $this->assertFalse($model->translationAttributeModified('name'));
     }
 
-    public function testCreatingNewTranslation()
+    /** @test */
+    public function getting_new_translation()
     {
         $model = TranslatableModel::first()->translate('da');
 
@@ -189,7 +219,8 @@ class TranslationTest extends TestCase
         $this->assertEquals('da', $model->getRawAttributes()['name']['locale']);
     }
 
-    public function testUpdatingTranslation()
+    /** @test */
+    public function updating_translation()
     {
         DB::table('translations')->insert([
             'table_name'  => 'articles',
@@ -236,7 +267,8 @@ class TranslationTest extends TestCase
         $this->assertEquals('da', $model->getRawAttributes()['name']['locale']);
     }
 
-    public function testSearchingTranslations()
+    /** @test */
+    public function searching_translations()
     {
         DB::table('translations')->insert([
             'table_name'  => 'articles',
@@ -276,7 +308,8 @@ class TranslationTest extends TestCase
         $this->assertEquals(1, ActuallyTranslatableModel::whereTranslation('slug', '=', 'nome-2', 'pt')->count());
     }
 
-    public function testSwitchingCurrentLocale()
+    /** @test */
+    public function switching_current_locale()
     {
         DB::table('translations')->insert([
             'table_name'  => 'articles',
@@ -297,7 +330,8 @@ class TranslationTest extends TestCase
         $this->assertEquals('name 1', $model->getTranslatedAttribute('name'));
     }
 
-    public function testUsingCustomTranslationsTable()
+    /** @test */
+    public function using_custom_translations_table()
     {
         TestsTranslationsModel::create([
             'table_name'  => 'articles',
@@ -335,6 +369,48 @@ class TranslationTest extends TestCase
 
         //Translation, correct locale
         $this->assertEquals(1, CustomTranslatableModel::whereTranslation('slug', '=', 'nome-2', 'pt')->count());
+    }
+
+    /** @test */
+    public function using_the_right_translations_model()
+    {
+        $normal = ActuallyTranslatableModel::first();
+
+        Translation::create([
+            'table_name'  => 'articles',
+            'column_name' => 'name',
+            'foreign_key' => $normal->id,
+            'locale'      => 'pt',
+            'value'       => 'nome-1',
+        ]);
+
+        $this->assertInstanceOf(Translation::class, $normal->translations()->first());
+        $this->assertNotInstanceOf(TestsTranslationsModel::class, $normal->translations()->first());
+
+        $custom = CustomTranslatableModel::first();
+
+        TestsTranslationsModel::create([
+            'table_name'  => 'articles',
+            'column_name' => 'name',
+            'foreign_key' => $custom->id,
+            'locale'      => 'pt',
+            'value'       => 'nome-2',
+        ]);
+
+        $this->assertInstanceOf(Translation::class, $custom->translations()->first());
+        $this->assertInstanceOf(TestsTranslationsModel::class, $custom->translations()->first());
+    }
+
+    /** @test */
+    public function is_translate_method_loads_relationship()
+    {
+        $model = ActuallyTranslatableModel::first();
+
+        $this->assertFalse($model->relationLoaded('translations'));
+
+        $model->translate('pt');
+
+        $this->assertTrue($model->relationLoaded('translations'));
     }
 }
 
