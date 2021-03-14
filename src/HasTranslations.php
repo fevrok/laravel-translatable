@@ -60,25 +60,9 @@ trait HasTranslations
      * @param string|bool $fallback 
      * @return Builder
      */
-    public function scopeWithTranslation(Builder $query, $locale = null, $fallback = true)
+    public function scopeWithTranslation(Builder $query, string $locale = null, $fallback = true)
     {
-        if (is_null($locale)) {
-            $locale = app()->getLocale();
-        }
-
-        if ($fallback === true) {
-            $fallback = config('app.fallback_locale', 'en');
-        }
-
-        $query->with([$this->translationsModel() => function (Relation $query) use ($locale, $fallback) {
-            $query->where(function ($q) use ($locale, $fallback) {
-                $q->where('locale', $locale);
-
-                if ($fallback !== false) {
-                    $q->orWhere('locale', $fallback);
-                }
-            });
-        }]);
+        return $query->withTranslations($locale, $fallback);
     }
 
     /**
@@ -100,7 +84,7 @@ trait HasTranslations
             $fallback = config('app.fallback_locale', 'en');
         }
 
-        $query->with([$this->translationsModel() => function (Relation $query) use ($locales, $fallback) {
+        $query->with([$this->translationsModel()->getTable() => function (Relation $query) use ($locales, $fallback) {
             if (is_null($locales)) {
                 return;
             }
