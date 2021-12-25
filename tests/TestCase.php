@@ -92,9 +92,9 @@ abstract class TestCase extends OrchestraTestCase
     }
 
     /**
-     * @param string $model 
-     * @param string $locale 
-     * @return Translator 
+     * @param string $model
+     * @param string $locale
+     * @return Translator
      */
     public function getModelTranslator(string $model, string $locale): Translator
     {
@@ -102,9 +102,9 @@ abstract class TestCase extends OrchestraTestCase
     }
 
     /**
-     * @param string $model 
-     * @param string $locale 
-     * @return Collection 
+     * @param string $model
+     * @param string $locale
+     * @return Collection
      */
     public function getModelTranslatorCollection(string $model, string $locale): Collection
     {

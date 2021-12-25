@@ -39,8 +39,8 @@ trait HasTranslations
 
     /**
      * Check if this model can translate.
-     * 
-     * @return bool 
+     *
+     * @return bool
      */
     public function translatable(): bool
     {
@@ -48,21 +48,7 @@ trait HasTranslations
             return false;
         }
 
-        return !empty($this->getTranslatableAttributes());
-    }
-
-    /**
-     * This scope eager loads the translations for the default and the fallback locale only.
-     * We can use this as a shortcut to improve performance in our application.
-     * 
-     * @param Builder $query 
-     * @param string|null $locale 
-     * @param string|bool $fallback 
-     * @return Builder
-     */
-    public function scopeWithTranslation(Builder $query, string $locale = null, $fallback = true)
-    {
-        return $query->withTranslations($locale, $fallback);
+        return ! empty($this->getTranslatableAttributes());
     }
 
     /**

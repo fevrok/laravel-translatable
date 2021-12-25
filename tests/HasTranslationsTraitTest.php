@@ -196,32 +196,15 @@ class HasTranslationsTraitTest extends TestCase
         $this->assertTrue($model->relationLoaded('translations'));
     }
 
-    // public function scopeWithTranslation(Builder $query, $locale = null, $fallback = true)
-
-    /** @test */
-    public function get_model_with_translation()
-    {
-        $model = ActuallyTranslatableModel::withTranslation('pt')->first();
-
-        $this->assertTrue($model->relationLoaded('translations'));
-    }
-
     // public function scopeWithTranslations(Builder $query, $locales = null, $fallback = true)
 
     /** @test */
     public function get_model_with_translations()
     {
-        $model = ActuallyTranslatableModel::withTranslations(['pt', 'ar'])->first();
+        $model = ActuallyTranslatableModel::withTranslations('pt')->first();
 
         $this->assertTrue($model->relationLoaded('translations'));
-        $this->markTestIncomplete('need more work');
-    }
 
-    // public function scopeWhereTranslation($query, $field, $operator, $value = null, $locales = null, $default = true)
-
-    /** @test */
-    public function get_model_where_translation()
-    {
         $model = ActuallyTranslatableModel::withTranslations(['pt', 'ar'])->first();
 
         $this->assertTrue($model->relationLoaded('translations'));
