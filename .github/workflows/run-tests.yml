@@ -28,7 +28,7 @@ jobs:
             php: [8.0, 8.1]
             dependency-version: [prefer-lowest, prefer-stable]
 
-    name: PHP:${{ matrix.php }} - Laravel:${{ matrix.laravel }} - ${{ matrix.dependency-version }}
+    name: Laravel:${{ matrix.laravel }} - PHP:${{ matrix.php }} - ${{ matrix.dependency-version }}
 
     steps:
       - name: Checkout code
