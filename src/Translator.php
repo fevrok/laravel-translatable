@@ -12,34 +12,34 @@ class Translator implements ArrayAccess, JsonSerializable
 {
     /**
      * Holds translated model instance.
-     * 
+     *
      * @var Model
      */
     protected $model;
 
     /**
      * Get all of the current attributes on the model.
-     * 
+     *
      * @var array
      */
     protected $attributes = [];
 
     /**
      * Holds the current locale or fallback to english.
-     * 
+     *
      * @var string
      */
     protected $locale;
 
     /**
      * Setup translator class.
-     * 
-     * @param Model $model 
-     * @return void 
+     *
+     * @param Model $model
+     * @return void
      */
     public function __construct(Model $model)
     {
-        if (!$model->relationLoaded('translations')) {
+        if (! $model->relationLoaded('translations')) {
             $model->load('translations');
         }
 
@@ -60,10 +60,9 @@ class Translator implements ArrayAccess, JsonSerializable
     }
 
     /**
-     * 
-     * @param mixed|null $locale 
-     * @param bool $fallback 
-     * @return $this 
+     * @param mixed|null $locale
+     * @param bool $fallback
+     * @return $this
      */
     public function translate($locale = null, $fallback = true)
     {
@@ -123,9 +122,9 @@ class Translator implements ArrayAccess, JsonSerializable
     }
 
     /**
-     * Return translations model
-     * 
-     * @return Translation 
+     * Return translations model.
+     *
+     * @return Translation
      */
     public function translationsModel()
     {
@@ -149,9 +148,9 @@ class Translator implements ArrayAccess, JsonSerializable
 
     /**
      * Get original attribute by key.
-     * 
-     * @param string $key 
-     * @return mixed 
+     *
+     * @param string $key
+     * @return mixed
      */
     public function getOriginalAttribute($key)
     {
@@ -160,10 +159,10 @@ class Translator implements ArrayAccess, JsonSerializable
 
     /**
      * Get model translations where column name equal to key.
-     * 
-     * @param string $key 
-     * @param string|null $locale 
-     * @return Model|null 
+     *
+     * @param string $key
+     * @param string|null $locale
+     * @return Model|null
      */
     public function getTranslationModel($key, $locale = null)
     {
@@ -175,8 +174,8 @@ class Translator implements ArrayAccess, JsonSerializable
 
     /**
      * Collect and return modified attributes.
-     * 
-     * @return array 
+     *
+     * @return array
      */
     public function getModifiedAttributes()
     {
@@ -185,11 +184,11 @@ class Translator implements ArrayAccess, JsonSerializable
 
     /**
      * Translate attribute.
-     * 
-     * @param string $attribute 
-     * @param array|string|null $locale 
-     * @param string|bool $fallback 
-     * @return $this 
+     *
+     * @param string $attribute
+     * @param array|string|null $locale
+     * @param string|bool $fallback
+     * @return $this
      */
     protected function translateAttribute($attribute, $locale = null, $fallback = true)
     {
@@ -207,9 +206,9 @@ class Translator implements ArrayAccess, JsonSerializable
 
     /**
      * Translate attribute to original.
-     * 
-     * @param string $attribute 
-     * @return $this 
+     *
+     * @param string $attribute
+     * @return $this
      */
     protected function translateAttributeToOriginal($attribute)
     {
@@ -225,13 +224,13 @@ class Translator implements ArrayAccess, JsonSerializable
 
     /**
      * Get model field value.
-     * 
-     * @param string $name 
-     * @return mixed 
+     *
+     * @param string $name
+     * @return mixed
      */
     public function __get($name)
     {
-        if (!isset($this->attributes[$name])) {
+        if (! isset($this->attributes[$name])) {
             if (isset($this->model->$name)) {
                 return $this->model->$name;
             }
@@ -239,7 +238,7 @@ class Translator implements ArrayAccess, JsonSerializable
             return;
         }
 
-        if (!$this->attributes[$name]['exists'] && !$this->attributes[$name]['modified']) {
+        if (! $this->attributes[$name]['exists'] && ! $this->attributes[$name]['modified']) {
             return $this->getOriginalAttribute($name);
         }
 
@@ -248,16 +247,16 @@ class Translator implements ArrayAccess, JsonSerializable
 
     /**
      * Set value to attribute.
-     * 
-     * @param string $name 
-     * @param mixed $value 
-     * @return mixed 
+     *
+     * @param string $name
+     * @param mixed $value
+     * @return mixed
      */
     public function __set($name, $value)
     {
         $this->attributes[$name]['value'] = $value;
 
-        if (!in_array($name, $this->model->getTranslatableAttributes())) {
+        if (! in_array($name, $this->model->getTranslatableAttributes())) {
             return $this->model->$name = $value;
         }
 
@@ -273,7 +272,7 @@ class Translator implements ArrayAccess, JsonSerializable
     {
         $this->attributes[$offset]['value'] = $value;
 
-        if (!in_array($offset, $this->model->getTranslatableAttributes())) {
+        if (! in_array($offset, $this->model->getTranslatableAttributes())) {
             return $this->model->$offset = $value;
         }
 
@@ -292,7 +291,7 @@ class Translator implements ArrayAccess, JsonSerializable
 
     public function translationAttributeExists($name)
     {
-        if (!isset($this->attributes[$name])) {
+        if (! isset($this->attributes[$name])) {
             return false;
         }
 
@@ -301,7 +300,7 @@ class Translator implements ArrayAccess, JsonSerializable
 
     public function translationAttributeModified($name)
     {
-        if (!isset($this->attributes[$name])) {
+        if (! isset($this->attributes[$name])) {
             return false;
         }
 
@@ -310,18 +309,18 @@ class Translator implements ArrayAccess, JsonSerializable
 
     /**
      * Fill translation and save to database (in current locale).
-     * 
-     * @param string $key 
-     * @param mixed $value 
-     * @return mixed 
+     *
+     * @param string $key
+     * @param mixed $value
+     * @return mixed
      */
     public function createTranslation($key, $value)
     {
-        if (!isset($this->attributes[$key])) {
+        if (! isset($this->attributes[$key])) {
             return false;
         }
 
-        if (!in_array($key, $this->model->getTranslatableAttributes())) {
+        if (! in_array($key, $this->model->getTranslatableAttributes())) {
             return false;
         }
 
@@ -348,9 +347,9 @@ class Translator implements ArrayAccess, JsonSerializable
 
     /**
      * Create many translations.
-     * 
-     * @param array $translations 
-     * @return void 
+     *
+     * @param array $translations
+     * @return void
      */
     public function createTranslations(array $translations)
     {
@@ -361,17 +360,17 @@ class Translator implements ArrayAccess, JsonSerializable
 
     /**
      * Delete translation by key and current locale.
-     * 
-     * @param string $key 
-     * @return bool 
+     *
+     * @param string $key
+     * @return bool
      */
     public function deleteTranslation($key)
     {
-        if (!isset($this->attributes[$key])) {
+        if (! isset($this->attributes[$key])) {
             return false;
         }
 
-        if (!$this->attributes[$key]['exists']) {
+        if (! $this->attributes[$key]['exists']) {
             return false;
         }
 
@@ -397,9 +396,9 @@ class Translator implements ArrayAccess, JsonSerializable
 
     /**
      * Delete multiple keys translations.
-     * 
-     * @param array $keys 
-     * @return void 
+     *
+     * @param array $keys
+     * @return void
      */
     public function deleteTranslations(array $keys)
     {
@@ -410,16 +409,16 @@ class Translator implements ArrayAccess, JsonSerializable
 
     /**
      * Call whenever a method doesnt exists.
-     * 
-     * @param string $method 
-     * @param array $arguments 
-     * @return mixed 
-     * @throws Exception 
+     *
+     * @param string $method
+     * @param array $arguments
+     * @return mixed
+     * @throws Exception
      */
     public function __call($method, array $arguments)
     {
-        if (!$this->model->hasTranslatorMethod($method)) {
-            throw new Exception('Call to undefined method Fevrok\Translatable\Translator::' . $method . '()');
+        if (! $this->model->hasTranslatorMethod($method)) {
+            throw new Exception('Call to undefined method Fevrok\Translatable\Translator::'.$method.'()');
         }
 
         return call_user_func_array([$this, 'runTranslatorMethod'], [$method, $arguments]);
@@ -427,10 +426,10 @@ class Translator implements ArrayAccess, JsonSerializable
 
     /**
      * Call model custom translator method.
-     * 
-     * @param string $method 
-     * @param array $arguments 
-     * @return mixed 
+     *
+     * @param string $method
+     * @param array $arguments
+     * @return mixed
      */
     public function runTranslatorMethod($method, array $arguments)
     {
@@ -443,8 +442,8 @@ class Translator implements ArrayAccess, JsonSerializable
 
     /**
      * Serialize raw attributes.
-     * 
-     * @return array 
+     *
+     * @return array
      */
     public function jsonSerialize()
     {

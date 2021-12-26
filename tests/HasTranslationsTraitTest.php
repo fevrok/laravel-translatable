@@ -351,7 +351,6 @@ class HasTranslationsTraitTest extends TestCase
         $this->assertNull($model->getTranslatedAttribute('wrong', 'pt', false));
     }
 
-
     // public function getTranslatedAttributeMeta($attribute, $locale = null, $fallback = true)
 
     /** @test */

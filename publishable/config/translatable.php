@@ -7,7 +7,7 @@ return [
    'enabled' => true,
 
    /**
-    * Select default language
+    * Select default language.
     */
    'locale' => 'en',
 

@@ -18,14 +18,14 @@ class TranslatableServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->publishes([
-            __DIR__ . '/../publishable/config/translatable.php' => config_path('translatable.php'),
+            __DIR__.'/../publishable/config/translatable.php' => config_path('translatable.php'),
         ]);
 
-        if (!class_exists('CreateTranslationsTable')) {
+        if (! class_exists('CreateTranslationsTable')) {
             $timestamp = date('Y_m_d_His', time());
 
             $this->publishes([
-                __DIR__ . '/../publishable/database/migrations/create_translations_table.php.stub' => database_path("/migrations/{$timestamp}_create_translations_table.php"),
+                __DIR__.'/../publishable/database/migrations/create_translations_table.php.stub' => database_path("/migrations/{$timestamp}_create_translations_table.php"),
             ], 'migrations');
         }
 
@@ -47,7 +47,7 @@ class TranslatableServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->mergeConfigFrom(__DIR__ . '/../publishable/config/translatable.php', 'translatable');
+        $this->mergeConfigFrom(__DIR__.'/../publishable/config/translatable.php', 'translatable');
 
         $loader = AliasLoader::getInstance();
         $loader->alias('Translatable', TranslatableFacade::class);
