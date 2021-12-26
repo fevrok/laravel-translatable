@@ -4,7 +4,12 @@ namespace Fevrok\Translatable\Tests;
 
 use CreateTestsTranslationsTable;
 use CreateTranslationsTable;
+use Fevrok\Translatable\Collection;
+use Fevrok\Translatable\HasTranslations;
+use Fevrok\Translatable\Tests\Models\NotTranslatableModel;
+use Fevrok\Translatable\Tests\Models\TestsTranslationsModel;
 use Fevrok\Translatable\TranslatableServiceProvider;
+use Fevrok\Translatable\Translator;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Facades\Schema;
@@ -85,4 +90,50 @@ abstract class TestCase extends OrchestraTestCase
             Encrypter::generateKey($app['config']['app.cipher'])
         ));
     }
+
+    /**
+     * @param string $model
+     * @param string $locale
+     * @return Translator
+     */
+    public function getModelTranslator(string $model, string $locale): Translator
+    {
+        return $model::first()->translate($locale);
+    }
+
+    /**
+     * @param string $model
+     * @param string $locale
+     * @return Collection
+     */
+    public function getModelTranslatorCollection(string $model, string $locale): Collection
+    {
+        return $model::get()->translate($locale);
+    }
+}
+
+class StillNotTranslatableModel extends NotTranslatableModel
+{
+    protected $translatable = ['name'];
+}
+
+class ActuallyTranslatableModel extends NotTranslatableModel
+{
+    use HasTranslations;
+}
+
+class TranslatableModel extends  NotTranslatableModel
+{
+    use HasTranslations;
+
+    protected $translatable = ['name'];
+}
+
+class CustomTranslatableModel extends  NotTranslatableModel
+{
+    use HasTranslations;
+
+    protected $translatable = ['name'];
+
+    protected $translations_model = TestsTranslationsModel::class;
 }

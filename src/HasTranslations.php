@@ -39,8 +39,8 @@ trait HasTranslations
 
     /**
      * Check if this model can translate.
-     * 
-     * @return bool 
+     *
+     * @return bool
      */
     public function translatable(): bool
     {
@@ -48,37 +48,7 @@ trait HasTranslations
             return false;
         }
 
-        return !empty($this->getTranslatableAttributes());
-    }
-
-    /**
-     * This scope eager loads the translations for the default and the fallback locale only.
-     * We can use this as a shortcut to improve performance in our application.
-     * 
-     * @param Builder $query 
-     * @param string|null $locale 
-     * @param string|bool $fallback 
-     * @return Builder
-     */
-    public function scopeWithTranslation(Builder $query, $locale = null, $fallback = true)
-    {
-        if (is_null($locale)) {
-            $locale = app()->getLocale();
-        }
-
-        if ($fallback === true) {
-            $fallback = config('app.fallback_locale', 'en');
-        }
-
-        $query->with([$this->translationsModel() => function (Relation $query) use ($locale, $fallback) {
-            $query->where(function ($q) use ($locale, $fallback) {
-                $q->where('locale', $locale);
-
-                if ($fallback !== false) {
-                    $q->orWhere('locale', $fallback);
-                }
-            });
-        }]);
+        return ! empty($this->getTranslatableAttributes());
     }
 
     /**
@@ -100,7 +70,7 @@ trait HasTranslations
             $fallback = config('app.fallback_locale', 'en');
         }
 
-        $query->with([$this->translationsModel() => function (Relation $query) use ($locales, $fallback) {
+        $query->with([$this->translationsModel()->getTable() => function (Relation $query) use ($locales, $fallback) {
             if (is_null($locales)) {
                 return;
             }
