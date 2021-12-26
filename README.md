@@ -115,7 +115,7 @@ class Item extends Model
     protected $translatable = [
         'name'
     ];
-	
+
     /**
       * The model used to get translatios.
       *
@@ -144,10 +144,10 @@ $posts = Post::withTranslations()->get();
 $posts = Post::withTranslations(['en', 'da'])->get();
 
 // Loads specific locale translations
-$posts = Post::withTranslation('da')->get();
+$posts = Post::withTranslations('da')->get();
 
 // Loads current locale translations
-$posts = Post::withTranslation('da')->get();
+$posts = Post::withTranslations('da')->get();
 ```
 
 ### Get default language value
@@ -205,7 +205,7 @@ This will update or create the translation for title of the post with the locale
 
 ### Query translatable Models
 
-To search for a translated value, you can use the `whereTranslation` method.  
+To search for a translated value, you can use the `whereTranslation` method.
 For example, to search for the slug of a post, you'd use
 
 ```php
