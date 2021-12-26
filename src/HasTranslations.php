@@ -3,7 +3,6 @@
 namespace Fevrok\Translatable;
 
 use Fevrok\Translatable\Models\Translation;
-use Fevrok\Translatable\Translator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -23,14 +22,14 @@ trait HasTranslations
 
     /**
      * Translate the whole model.
-     * 
-     * @param string|null $locale 
-     * @param string|bool $fallback 
-     * @return Translator 
+     *
+     * @param string|null $locale
+     * @param string|bool $fallback
+     * @return Translator
      */
     public function translate($locale = null, $fallback = true)
     {
-        if (!$this->relationLoaded('translations')) {
+        if (! $this->relationLoaded('translations')) {
             $this->load('translations');
         }
 
@@ -54,10 +53,10 @@ trait HasTranslations
     /**
      * This scope eager loads the translations for the default and the fallback locale only.
      * We can use this as a shortcut to improve performance in our application.
-     * 
-     * @param Builder $query 
-     * @param string|null|array $locales 
-     * @param string|bool $fallback 
+     *
+     * @param Builder $query
+     * @param string|null|array $locales
+     * @param string|bool $fallback
      * @return Builder
      */
     public function scopeWithTranslations(Builder $query, $locales = null, $fallback = true)
@@ -95,7 +94,7 @@ trait HasTranslations
      * @example  Class::whereTranslation('title', '=', 'zuhause', ['de', 'iu'])
      * @example  $query->whereTranslation('title', '=', 'zuhause', ['de', 'iu'])
      *
-     * @param Builder $query 
+     * @param Builder $query
      * @param string $field {required} the field your looking to find a value in.
      * @param string $operator {required} value you are looking for or a relation modifier such as LIKE, =, etc.
      * @param string $value {optional} value you are looking for. Only use if you supplied an operator.
@@ -106,11 +105,11 @@ trait HasTranslations
      */
     public function scopeWhereTranslation($query, $field, $operator, $value = null, $locales = null, $default = true)
     {
-        if ($locales && !is_array($locales)) {
+        if ($locales && ! is_array($locales)) {
             $locales = [$locales];
         }
 
-        if (!isset($value)) {
+        if (! isset($value)) {
             $value = $operator;
             $operator = '=';
         }
@@ -120,7 +119,7 @@ trait HasTranslations
             $this->translationsModel()::where('table_name', $this->getTable())
                 ->where('column_name', $field)
                 ->where('value', $operator, $value)
-                ->when(!is_null($locales), function ($query) use ($locales) {
+                ->when(! is_null($locales), function ($query) use ($locales) {
                     return $query->whereIn('locale', $locales);
                 })
                 ->pluck('foreign_key')
@@ -131,11 +130,11 @@ trait HasTranslations
 
     /**
      * Get attribute translations of many launguages.
-     * 
-     * @param mixed $attribute 
-     * @param array|null $locales 
-     * @param bool $fallback 
-     * @return array 
+     *
+     * @param mixed $attribute
+     * @param array|null $locales
+     * @param bool $fallback
+     * @return array
      */
     public function getTranslationsOf($attribute, array $locales = null, $fallback = true)
     {
@@ -163,7 +162,7 @@ trait HasTranslations
     public function getTranslatedAttribute($attribute, $locale = null, $fallback = true)
     {
         // If multilingual is not enabled don't check for translations
-        if (!config('translatable.enabled')) {
+        if (! config('translatable.enabled')) {
             return $this->getAttributeValue($attribute);
         }
 
@@ -174,17 +173,17 @@ trait HasTranslations
 
     /**
      * Get translated attribute meta.
-     * 
-     * @param string $attribute 
-     * @param string|null $locale 
-     * @param string|bool $fallback 
-     * @return array 
+     *
+     * @param string $attribute
+     * @param string|null $locale
+     * @param string|bool $fallback
+     * @return array
      */
     public function getTranslatedAttributeMeta($attribute, $locale = null, $fallback = true)
     {
         // Attribute is translatable
         //
-        if (!in_array($attribute, $this->getTranslatableAttributes())) {
+        if (! in_array($attribute, $this->getTranslatableAttributes())) {
             return [$this->getAttribute($attribute), config('translatable.locale'), false];
         }
 
@@ -202,7 +201,7 @@ trait HasTranslations
             return [$this->getAttribute($attribute), $default, true];
         }
 
-        if (!$this->relationLoaded('translations')) {
+        if (! $this->relationLoaded('translations')) {
             $this->load('translations');
         }
 
@@ -234,7 +233,7 @@ trait HasTranslations
 
     /**
      * Get attributes that can be translated.
-     * 
+     *
      * @return array
      */
     public function getTranslatableAttributes()
@@ -260,17 +259,17 @@ trait HasTranslations
 
     /**
      * Set translation.
-     * 
-     * @param string $attribute 
-     * @param array $translations 
-     * @param bool $save 
-     * @return array 
+     *
+     * @param string $attribute
+     * @param array $translations
+     * @param bool $save
+     * @return array
      */
     public function setAttributeTranslations($attribute, array $translations, $save = false)
     {
         $response = [];
 
-        if (!$this->relationLoaded('translations')) {
+        if (! $this->relationLoaded('translations')) {
             $this->load('translations');
         }
 
@@ -301,9 +300,9 @@ trait HasTranslations
 
     /**
      * Save translations.
-     * 
-     * @param mixed $translations 
-     * @return void 
+     *
+     * @param mixed $translations
+     * @return void
      */
     public function saveTranslations($translations)
     {
@@ -316,13 +315,13 @@ trait HasTranslations
 
     /**
      * Check if attribute has custom translator method.
-     * 
-     * @param string $name 
-     * @return bool 
+     *
+     * @param string $name
+     * @return bool
      */
     public function hasTranslatorMethod($name)
     {
-        if (!isset($this->translatorMethods)) {
+        if (! isset($this->translatorMethods)) {
             return false;
         }
 
@@ -331,13 +330,13 @@ trait HasTranslations
 
     /**
      * Get attribute custom translator method.
-     * 
-     * @param string $name 
-     * @return mixed 
+     *
+     * @param string $name
+     * @return mixed
      */
     public function getTranslatorMethod($name)
     {
-        if (!$this->hasTranslatorMethod($name)) {
+        if (! $this->hasTranslatorMethod($name)) {
             return;
         }
 
@@ -346,16 +345,16 @@ trait HasTranslations
 
     /**
      * Delete attributes translations.
-     * 
-     * @param array $attributes 
-     * @param array|string|null $locales 
-     * @return void 
+     *
+     * @param array $attributes
+     * @param array|string|null $locales
+     * @return void
      */
     public function deleteAttributeTranslations(array $attributes, $locales = null)
     {
         $this->translations()
             ->whereIn('column_name', $attributes)
-            ->when(!is_null($locales), function ($query) use ($locales) {
+            ->when(! is_null($locales), function ($query) use ($locales) {
                 $method = is_array($locales) ? 'whereIn' : 'where';
 
                 return $query->$method('locale', $locales);
@@ -365,16 +364,16 @@ trait HasTranslations
 
     /**
      * Delete Attribute translation.
-     * 
-     * @param string $attribute 
-     * @param array|string|null $locales 
-     * @return void 
+     *
+     * @param string $attribute
+     * @param array|string|null $locales
+     * @return void
      */
     public function deleteAttributeTranslation($attribute, $locales = null)
     {
         $this->translations()
             ->where('column_name', $attribute)
-            ->when(!is_null($locales), function ($query) use ($locales) {
+            ->when(! is_null($locales), function ($query) use ($locales) {
                 $method = is_array($locales) ? 'whereIn' : 'where';
 
                 return $query->$method('locale', $locales);

@@ -14,7 +14,7 @@ class Translatable
      */
     public function translatable($model)
     {
-        if (!config('translatable.enabled')) {
+        if (! config('translatable.enabled')) {
             return false;
         }
 
@@ -26,7 +26,7 @@ class Translatable
             $model = $model->first();
         }
 
-        if (!is_subclass_of($model, Model::class)) {
+        if (! is_subclass_of($model, Model::class)) {
             return false;
         }
 

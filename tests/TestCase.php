@@ -40,8 +40,8 @@ abstract class TestCase extends OrchestraTestCase
 
     protected function createTranslationsTable()
     {
-        include_once __DIR__ . '/../publishable/database/migrations/create_translations_table.php.stub';
-        include_once __DIR__ . '/stubs/create_tests_translations_table.php.stub';
+        include_once __DIR__.'/../publishable/database/migrations/create_translations_table.php.stub';
+        include_once __DIR__.'/stubs/create_tests_translations_table.php.stub';
 
         (new CreateTranslationsTable())->up();
         (new CreateTestsTranslationsTable())->up();
@@ -86,7 +86,7 @@ abstract class TestCase extends OrchestraTestCase
         ]);
 
         // $app['config']->set('auth.providers.users.model', User::class);
-        $app['config']->set('app.key', 'base64:' . base64_encode(
+        $app['config']->set('app.key', 'base64:'.base64_encode(
             Encrypter::generateKey($app['config']['app.cipher'])
         ));
     }
@@ -122,14 +122,14 @@ class ActuallyTranslatableModel extends NotTranslatableModel
     use HasTranslations;
 }
 
-class TranslatableModel extends  NotTranslatableModel
+class TranslatableModel extends NotTranslatableModel
 {
     use HasTranslations;
 
     protected $translatable = ['name'];
 }
 
-class CustomTranslatableModel extends  NotTranslatableModel
+class CustomTranslatableModel extends NotTranslatableModel
 {
     use HasTranslations;
 
